@@ -4,46 +4,44 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentTracksBinding
-import com.example.musicplayer.utils.LifeCycleAwareBinding
+import com.example.musicplayer.utils.repeateLaunchOnState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FragmentTracks : Fragment(R.layout.fragment_tracks) {
 
     private lateinit var musicAdapter: MusicTracksItemAdapter
 
-    private val binding = LifeCycleAwareBinding<FragmentTracksBinding>(parentFragmentManager)()
+    private var _binding: FragmentTracksBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: ViewModelTracks by viewModels()
 
-    var hasBeenLoaded: Boolean = false
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        _binding = FragmentTracksBinding.bind(view)
         init()
         observer()
     }
 
     private fun init() = with(binding) {
-        val context = if (hasBeenLoaded) null else requireContext()
         musicAdapter = MusicTracksItemAdapter()
-        lifecycleScope.launch {
-            viewModel.getMusics(context).collect {
-                musicAdapter.addAndSubmitList(it)
-            }
-            hasBeenLoaded = true
-        }
-        binding.list.adapter = musicAdapter
+        list.adapter = musicAdapter
     }
 
     private fun observer() = with(binding) {
-        lifecycleScope.launch {
-//            viewModel.getMusics()
+        repeateLaunchOnState(Lifecycle.State.STARTED) {
+            viewModel.musicsStateFlow.collect {
+                musicAdapter.submitList(it)
+            }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

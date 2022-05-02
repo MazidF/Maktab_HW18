@@ -2,9 +2,18 @@ package com.example.musicplayer.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = Music.TABLE_NAME)
+@Entity(
+    tableName = Music.TABLE_NAME,
+    indices = [
+        Index(
+            value = ["music_data"],
+            unique = true
+        )
+    ]
+)
 data class Music(
     @ColumnInfo(name = "music_name") val name: String,
     @ColumnInfo(name = "music_time") val time: String,

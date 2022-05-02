@@ -1,13 +1,42 @@
 package com.example.musicplayer.utils
 
-import android.os.Bundle
-import android.view.View
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
+
+class LiveDataWrapper<T>(t: T? = null) {
+    private val liveData by lazy {
+        if (t == null) {
+            MutableLiveData<T>()
+        } else {
+            MutableLiveData(t)
+        }
+    }
+
+    fun value() = liveData.value
+
+    fun valueNotNull() = value()!!
+
+    fun postValue(t: T?) {
+        liveData.postValue(t)
+    }
+
+    fun apply(apply: (T) -> Unit) {
+        setValue(value()?.apply(apply))
+    }
+
+    fun setValue(t: T?) {
+        liveData.value = t
+    }
+
+    fun liveData(): LiveData<T> = liveData
+
+    fun <R> map(transformer: (T) -> R): LiveData<R> {
+        return Transformations.map(liveData, transformer)
+    }
+}
 
 class StateFlowWrapper<T>(t: T) {
     private val stateFlow by lazy {
@@ -23,50 +52,4 @@ class StateFlowWrapper<T>(t: T) {
     suspend fun collect(collector: FlowCollector<T>) {
         stateFlow.collect(collector)
     }
-}
-
-class LifeCycleAwareBinding<BindingT : ViewDataBinding>(fragmentManager: FragmentManager) :
-    FragmentManager.FragmentLifecycleCallbacks() {
-
-    init {
-        fragmentManager.registerFragmentLifecycleCallbacks(this, false)
-    }
-
-    private var _binding: BindingT? = null
-
-    override fun onFragmentViewCreated(
-        fm: FragmentManager,
-        f: Fragment,
-        v: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onFragmentViewCreated(fm, f, v, savedInstanceState)
-        _binding = DataBindingUtil.bind(v)
-    }
-
-    override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
-        super.onFragmentViewDestroyed(fm, f)
-        _binding = null
-    }
-
-    operator fun invoke() = _binding!!
-}
-
-class Node {
-    var next: Node? = null
-
-    fun copy() = Node().apply {
-        this.next = this@Node.next
-    }
-}
-
-fun main() {
-    val list = Node()
-    function(list, list.copy(), list.next?.copy())
-}
-
-fun function(list: Node?, odd: Node?, even: Node?) {
-    odd?.next = list?.next
-    even?.next = list?.next?.next
-    function(list?.next?.next, odd?.next, even?.next)
 }

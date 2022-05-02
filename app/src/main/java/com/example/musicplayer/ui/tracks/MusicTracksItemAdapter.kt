@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
 
-class MusicTracksItemAdapter : ListAdapter<Music, MusicTracksItemAdapter.MusicHolder>(
+class MusicTracksItemAdapter(
+    private val onClick: () -> Unit = {}
+) : ListAdapter<Music, MusicTracksItemAdapter.MusicHolder>(
     DIFF_ITEM_CALLBACK
 ) {
 
@@ -40,11 +42,6 @@ class MusicTracksItemAdapter : ListAdapter<Music, MusicTracksItemAdapter.MusicHo
 
     override fun onBindViewHolder(holder: MusicHolder, position: Int) {
         holder.bind(getItem(position))
-    }
-
-    fun addAndSubmitList(list: List<Music>) {
-        submitList(currentList + list)
-
     }
 
 }

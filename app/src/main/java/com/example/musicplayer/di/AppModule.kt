@@ -10,7 +10,8 @@ import com.example.musicplayer.di.annotations.DispatcherMain
 import com.example.musicplayer.di.annotations.HasBeenLoaded
 import com.example.musicplayer.domain.MusicUseCase
 import com.example.musicplayer.utils.Constants
-import com.example.musicplayer.utils.getSharedPreferences
+import com.example.musicplayer.utils.hasBeenLoaded
+import com.example.musicplayer.utils.sharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,11 +41,13 @@ class AppModule {
     @Singleton
     fun provideMusicUseCase(
         repository: MusicRepository,
-        @DispatcherIO dispatcher: CoroutineContext
+        @DispatcherIO dispatcher: CoroutineContext,
+        @ApplicationContext context: Context
     ): MusicUseCase {
         return MusicUseCase(
             repository = repository,
-            dispatcher = dispatcher
+            dispatcher = dispatcher,
+            hasBeenLoaded = context.hasBeenLoaded()
         )
     }
 
@@ -54,7 +57,7 @@ class AppModule {
     fun provideHasLoaded(
         @ApplicationContext context: Context
     ): Boolean {
-        val sharedPreferences = context.getSharedPreferences()
+        val sharedPreferences = context.sharedPreferences()
         return sharedPreferences.getBoolean(Constants.HAS_BEEN_LOADED, false)
     }
 

@@ -28,20 +28,8 @@ class MusicLocalRepository @Inject constructor(
     private val artistDataSource: ArtistLocalDataSource,
     @DispatcherIO private val dispatcher: CoroutineContext,
 ) {
-    private fun Cursor.getString(name: String): String {
-        val index = getColumnIndex(name)
-        if (index < 0) return Constants.UNKNOWN
-        return getString(index)
-    }
-
-    private fun Cursor.getLong(name: String): Long {
-        val index = getColumnIndex(name)
-        if (index < 0) return Constants.UNKNOWN_ID
-        return getLong(index)
-    }
 
     private fun loadMusics(context: Context, uri: Uri): Flow<Music> = flow {
-//        val uri = MediaInfo.EXTERNAL_CONTENT_URI
         val projection = arrayOf(
             MediaInfo.ALBUM,
             MediaInfo.ALBUM_ID,
@@ -50,7 +38,7 @@ class MusicLocalRepository @Inject constructor(
             MediaInfo.DATA,
             MediaInfo.DISPLAY_NAME,
             MediaInfo.DURATION
-        )
+        ) // or null to be easier :)
         val selection = MediaInfo.IS_MUSIC + " != 0"
         val sortOrder = MediaInfo.DISPLAY_NAME + " ASC"
         val cursor: Cursor = context.contentResolver
@@ -62,25 +50,41 @@ class MusicLocalRepository @Inject constructor(
         val setArtist = hashSetOf<Artist>()
         val setAlbum = hashSetOf<Album>()
 
+        val nameColumn = cursor.getColumnIndex(MediaInfo.DISPLAY_NAME)
+        val dataColumn = cursor.getColumnIndex(MediaInfo.DATA)
+        val albumColumn = cursor.getColumnIndex(MediaInfo.ALBUM)
+        val artistColumn = cursor.getColumnIndex(MediaInfo.ARTIST)
+        val albumIdColumn = cursor.getColumnIndex(MediaInfo.ALBUM_ID)
+        val artistIdColumn = cursor.getColumnIndex(MediaInfo.ARTIST_ID)
+        val durationColumn = cursor.getColumnIndex(MediaInfo.DURATION)
+
+        var songName: String
+        var path: String
+        var albumName: String
+        var artistName: String
+        var albumId: Long
+        var artistId: Long
+        var time: Int
+
         if (cursor.moveToFirst()) {
             do {
-                val songName: String = cursor.getString(MediaInfo.DISPLAY_NAME)
+                songName = cursor.getString(nameColumn)
 
-                val path: String = cursor.getString(MediaInfo.DATA)
+                path = cursor.getString(dataColumn)
 
-                val albumName: String = cursor.getString(MediaInfo.ALBUM)
+                albumName = cursor.getString(albumColumn)
 
-                val artistName: String = cursor.getString(MediaInfo.ARTIST)
+                artistName = cursor.getString(artistColumn)
 
-                val albumId: Long = albums[albumName]?.id ?: cursor.getLong(MediaInfo.ALBUM_ID).also {
+                albumId = albums[albumName]?.id ?: cursor.getLong(albumIdColumn).also {
                     setAlbum.add(Album(it, albumName))
                 }
 
-                val artistId: Long = artists[artistName]?.id ?: cursor.getLong(MediaInfo.ARTIST_ID).also {
+                artistId = artists[artistName]?.id ?: cursor.getLong(artistIdColumn).also {
                     setArtist.add(Artist(it, artistName))
                 }
 
-                val time: Int = cursor.getColumnIndex(MediaInfo.DURATION).run {
+                time = cursor.getInt(durationColumn).run {
                     if (this < 0)
                         0
                     else
@@ -105,22 +109,23 @@ class MusicLocalRepository @Inject constructor(
         artistDataSource.insertItems(*setArtist.toTypedArray())
 
         cursor.close()
-        val file = File(uri.path)
-        val a = file.listFiles { f, _ ->
-            f.isDirectory
-        }
-
-        a?.forEach {
-            loadMusics(context, it.toUri())
-        }
     }.flowOn(dispatcher)
 
-    fun getAllMusics(context: Context? = null): Flow<List<Music>> {
-        if (context != null) {
-            val uri = MediaInfo.EXTERNAL_CONTENT_URI
-            return loadMusics(context, uri).collectAsList(10)
-        }
+    fun loadMusics(context: Context): Flow<List<Music>> {
+        val uri = MediaInfo.EXTERNAL_CONTENT_URI
+        return loadMusics(context, uri).collectAsList(10)
+    }
+
+    fun getAllMusics(): Flow<List<Music>> {
         return musicDataSource.getItems()
+    }
+
+    fun getAllAlbums(): Flow<List<Album>> {
+        return albumDataSource.getItems()
+    }
+
+    fun getAllArtists(): Flow<List<Artist>> {
+        return artistDataSource.getItems()
     }
 
 }

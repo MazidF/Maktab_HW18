@@ -1,6 +1,8 @@
 package com.example.musicplayer.data.repository
 
 import android.content.Context
+import com.example.musicplayer.data.model.Album
+import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.di.annotations.DispatcherIO
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +18,20 @@ class MusicRepository(
     private val dispatcher: CoroutineContext = Dispatchers.IO,
 ) {
 
-    fun getAllMusics(context: Context?): Flow<List<Music>> {
-        return local.getAllMusics(context).flowOn(dispatcher)
+    fun loadMusics(context: Context): Flow<List<Music>> {
+        return local.loadMusics(context)
+    }
+
+    fun getAllMusics(): Flow<List<Music>> {
+        return local.getAllMusics().flowOn(dispatcher)
+    }
+
+    fun getAllAlbums(): Flow<List<Album>> {
+        return local.getAllAlbums()
+    }
+
+    fun getAllArtists(): Flow<List<Artist>> {
+        return local.getAllArtists()
     }
 
 }

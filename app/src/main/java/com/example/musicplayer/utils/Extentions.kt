@@ -6,12 +6,14 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-
 
 
 typealias MediaInfo = MediaStore.Audio.Media
@@ -52,8 +54,18 @@ fun <T, K> List<T>.toMap(key: T.() -> K): HashMap<K, T> {
     return hashMapOf(*keys to this)
 }
 
-fun Context.getSharedPreferences(mode: Int = Context.MODE_PRIVATE): SharedPreferences {
+fun Context.sharedPreferences(mode: Int = Context.MODE_PRIVATE): SharedPreferences {
     return getSharedPreferences(packageName, mode)
+}
+
+fun Context.hasBeenLoaded(defaultValue: Boolean = false): Boolean {
+    return sharedPreferences().getBoolean(Constants.HAS_BEEN_LOADED, defaultValue)
+}
+
+fun Context.loaded() {
+    return sharedPreferences().edit()
+        .putBoolean(Constants.HAS_BEEN_LOADED, true)
+        .apply()
 }
 
 fun AppCompatActivity.requestPermissions(
@@ -69,7 +81,7 @@ fun AppCompatActivity.requestPermissions(
 
 fun <T> Flow<T>.collectAsList(size: Int): Flow<List<T>> = flow {
     var counter = 0
-    var list = ArrayList<T>(size)
+    val list = ArrayList<T>(size)
     this@collectAsList.collect {
         list.add(it)
         if (counter++ == size - 1) {
@@ -85,11 +97,27 @@ fun <T> Flow<T>.collectAsList(size: Int): Flow<List<T>> = flow {
     )
 }
 
-suspend fun <T> Flow<T>.collectAndToList(initialCapacity: Int = 10, collector: FlowCollector<T>): List<T> {
+suspend fun <T> Flow<T>.collectAndToList(
+    initialCapacity: Int = 10,
+    collector: FlowCollector<T>
+): List<T> {
     val result = ArrayList<T>(initialCapacity)
     collect {
         collector.emit(it)
         result.add(it)
     }
     return result
+}
+
+fun shuffleIntArray(size: Int, random: Random = Random(System.currentTimeMillis())): List<Int> {
+    return (0 until size).shuffled(random).toList()
+}
+
+fun Fragment.repeateLaunchOnState(
+    state: Lifecycle.State,
+    block: suspend CoroutineScope.() -> Unit
+) {
+    lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(state, block)
+    }
 }
