@@ -1,14 +1,12 @@
-package com.example.musicplayer.ui
+package com.example.musicplayer.ui.activity.loading
 
 import android.Manifest
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.musicplayer.R
 import com.example.musicplayer.databinding.ActivityLoadingBinding
+import com.example.musicplayer.ui.activity.main.MainActivity
 import kotlin.concurrent.thread
 
 class LoadingActivity : AppCompatActivity() {
@@ -19,6 +17,9 @@ class LoadingActivity : AppCompatActivity() {
         binding = ActivityLoadingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.apply {
+            hide()
+        }
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             onPermissionResult(it)
         }

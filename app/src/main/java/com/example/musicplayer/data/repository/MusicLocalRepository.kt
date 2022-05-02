@@ -84,12 +84,7 @@ class MusicLocalRepository @Inject constructor(
                     setArtist.add(Artist(it, artistName))
                 }
 
-                time = cursor.getInt(durationColumn).run {
-                    if (this < 0)
-                        0
-                    else
-                        cursor.getInt(this)
-                }
+                time = cursor.getInt(durationColumn)
 
                 emit(
                     Music(

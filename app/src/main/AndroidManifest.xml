@@ -13,10 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activity.main.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.LoadingActivity"
+            android:name=".ui.activity.loading.LoadingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

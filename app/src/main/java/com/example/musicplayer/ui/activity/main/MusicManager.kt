@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui
+package com.example.musicplayer.ui.activity.main
 
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
@@ -66,7 +66,7 @@ object MusicManager : OnPreparedListener, OnCompletionListener, OnErrorListener 
 
     private fun setDataSource(music: Music) {
         player.setDataSource(music.data)
-        this.musicHandler.apply {
+        musicHandler.apply {
             it.changeMusic(music)
         }
     }

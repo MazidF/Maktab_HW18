@@ -1,10 +1,11 @@
-package com.example.musicplayer.ui
+package com.example.musicplayer.ui.activity.main
 
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.musicplayer.databinding.ActivityMainBinding
+import com.example.musicplayer.ui.MyFragmentStateAdapter
 import com.example.musicplayer.ui.tracks.FragmentTracks
 import dagger.hilt.android.AndroidEntryPoint
 

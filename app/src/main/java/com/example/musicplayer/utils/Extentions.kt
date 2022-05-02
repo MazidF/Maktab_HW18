@@ -58,8 +58,8 @@ fun Context.sharedPreferences(mode: Int = Context.MODE_PRIVATE): SharedPreferenc
     return getSharedPreferences(packageName, mode)
 }
 
-fun Context.hasBeenLoaded(defaultValue: Boolean = false): Boolean {
-    return sharedPreferences().getBoolean(Constants.HAS_BEEN_LOADED, defaultValue)
+fun Context.hasBeenLoaded(): Boolean {
+    return sharedPreferences().getBoolean(Constants.HAS_BEEN_LOADED, false)
 }
 
 fun Context.loaded() {
