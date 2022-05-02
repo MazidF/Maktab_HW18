@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="alphabet_listView" parent="">
+
+        <item name="background">@drawable/alphabet_list</item>
+
+    </style>
+
+    <style name="ImageViewWithCorner">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">21%</item>
+    </style>
+
+    <style name="singleLineTextView" parent="Widget.AppCompat.TextView">
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="turningTextView" parent="Widget.AppCompat.TextView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+</resources>

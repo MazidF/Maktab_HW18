@@ -2,7 +2,6 @@
 <resources>
 
     <declare-styleable name="CustomTabLayout">
-        <attr name="itemCount" format="integer" />
         <attr name="items" format="reference" />
     </declare-styleable>
 

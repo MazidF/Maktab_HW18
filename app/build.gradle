@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.maktabplus"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 32
         versionCode 8
         versionName "1.0.8"

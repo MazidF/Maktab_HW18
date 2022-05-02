@@ -110,7 +110,7 @@ class MusicLocalRepository @Inject constructor(
 
     fun loadMusics(context: Context): Flow<List<Music>> {
         val uri = MediaInfo.EXTERNAL_CONTENT_URI
-        return loadMusics(context, uri).collectAsList(10)
+        return loadMusics(context, uri).collectAsList(30)
     }
 
     fun getAllMusics(): Flow<List<Music>> {

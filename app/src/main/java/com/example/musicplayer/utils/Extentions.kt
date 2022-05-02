@@ -2,12 +2,17 @@ package com.example.musicplayer.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.provider.MediaStore
+import android.view.View
+import android.widget.RadioButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
@@ -113,11 +118,56 @@ fun shuffleIntArray(size: Int, random: Random = Random(System.currentTimeMillis(
     return (0 until size).shuffled(random).toList()
 }
 
-fun Fragment.repeateLaunchOnState(
+fun Fragment.repeatLaunchOnState(
     state: Lifecycle.State,
     block: suspend CoroutineScope.() -> Unit
 ) {
     lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(state, block)
+    }
+}
+
+fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+fun View.invisible() {
+    visibility = View.INVISIBLE
+}
+
+fun View.gone() {
+    visibility = View.GONE
+}
+
+fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+    var ob: Observer<T>? = null
+    ob = Observer<T> {
+        observer.onChanged(it)
+        ob?.run {
+            removeObserver(this)
+        }
+    }
+    observeForever(ob)
+}
+
+fun Context.getOrientation(): Int {
+    return resources.configuration.orientation
+}
+
+fun Context.isLandScape(): Boolean {
+    return getOrientation() == Configuration.ORIENTATION_LANDSCAPE
+}
+
+fun RadioButton.setup() {
+    isSelected = false
+    isChecked = false
+    setOnClickListener {
+        if (isSelected) {
+            isSelected = false
+            isChecked = false
+        } else {
+            isSelected = true
+            isChecked = true
+        }
     }
 }

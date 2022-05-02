@@ -3,13 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_more_vertical.xml" value="0.2595" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/alphabet_list.xml" value="0.1" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/back_item.xml" value="0.1" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/back_select.xml" value="0.1" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/scrollbar_thumb.xml" value="0.1075" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/activity_loading.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/activity_main.xml" value="0.15534420289855072" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/activity_main.xml" value="0.16203703703703703" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/activity_splash_screen.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/alphabet_seekbar.xml" value="0.2" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/custom_tab_layout.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/fragment_tracks.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/fragment_tracks.xml" value="0.4" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/motion_layou.xml" value="0.176" />
-        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/music_item_tracks.xml" value="0.17391304347826086" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/music_item_tracks.xml" value="0.4" />
       </map>
     </option>
   </component>
