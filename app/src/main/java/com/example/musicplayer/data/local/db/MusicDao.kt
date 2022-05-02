@@ -12,7 +12,7 @@ abstract class MusicDao : IDao<Music, Long>(Music.TABLE_NAME) {
     @Query("select * from music_table where music_id = :primaryKey limit 1")
     abstract override fun get(primaryKey: Long): Flow<Music?>
 
-    @Query("select * from music_table")
+    @Query("select * from music_table order by music_name")
     abstract override fun getItems(): Flow<List<Music>>
 
     @RawQuery(observedEntities = [Music::class])

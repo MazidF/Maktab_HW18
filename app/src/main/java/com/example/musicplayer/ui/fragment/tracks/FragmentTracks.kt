@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui.tracks
+package com.example.musicplayer.ui.fragment.tracks
 
 import android.os.Bundle
 import android.view.View

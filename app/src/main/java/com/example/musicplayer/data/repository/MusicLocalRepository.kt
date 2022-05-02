@@ -38,35 +38,36 @@ class MusicLocalRepository @Inject constructor(
             MediaInfo.DATA,
             MediaInfo.DISPLAY_NAME,
             MediaInfo.DURATION
-        ) // or null to be easier :)
+        ) // or null to be easier
         val selection = MediaInfo.IS_MUSIC + " != 0"
         val sortOrder = MediaInfo.DISPLAY_NAME + " ASC"
         val cursor: Cursor = context.contentResolver
             .query(uri, projection, selection, null, sortOrder, ) ?: return@flow
 
-        val albums = albumDataSource.getItems().first().toMap { name }
-        val artists = artistDataSource.getItems().first().toMap { name }
-
-        val setArtist = hashSetOf<Artist>()
-        val setAlbum = hashSetOf<Album>()
-
-        val nameColumn = cursor.getColumnIndex(MediaInfo.DISPLAY_NAME)
-        val dataColumn = cursor.getColumnIndex(MediaInfo.DATA)
-        val albumColumn = cursor.getColumnIndex(MediaInfo.ALBUM)
-        val artistColumn = cursor.getColumnIndex(MediaInfo.ARTIST)
-        val albumIdColumn = cursor.getColumnIndex(MediaInfo.ALBUM_ID)
-        val artistIdColumn = cursor.getColumnIndex(MediaInfo.ARTIST_ID)
-        val durationColumn = cursor.getColumnIndex(MediaInfo.DURATION)
-
-        var songName: String
-        var path: String
-        var albumName: String
-        var artistName: String
-        var albumId: Long
-        var artistId: Long
-        var time: Int
 
         if (cursor.moveToFirst()) {
+
+            val albums = albumDataSource.getItems().first().toMap { name }
+            val artists = artistDataSource.getItems().first().toMap { name }
+
+            val setArtist = hashSetOf<Artist>()
+            val setAlbum = hashSetOf<Album>()
+
+            val nameColumn = cursor.getColumnIndex(MediaInfo.DISPLAY_NAME)
+            val dataColumn = cursor.getColumnIndex(MediaInfo.DATA)
+            val albumColumn = cursor.getColumnIndex(MediaInfo.ALBUM)
+            val artistColumn = cursor.getColumnIndex(MediaInfo.ARTIST)
+            val albumIdColumn = cursor.getColumnIndex(MediaInfo.ALBUM_ID)
+            val artistIdColumn = cursor.getColumnIndex(MediaInfo.ARTIST_ID)
+            val durationColumn = cursor.getColumnIndex(MediaInfo.DURATION)
+
+            var songName: String
+            var path: String
+            var albumName: String
+            var artistName: String
+            var albumId: Long
+            var artistId: Long
+            var time: Int
             do {
                 songName = cursor.getString(nameColumn)
 
@@ -99,9 +100,10 @@ class MusicLocalRepository @Inject constructor(
                 )
 
             } while (cursor.moveToNext())
+
+            albumDataSource.insertItems(*setAlbum.toTypedArray())
+            artistDataSource.insertItems(*setArtist.toTypedArray())
         }
-        albumDataSource.insertItems(*setAlbum.toTypedArray())
-        artistDataSource.insertItems(*setArtist.toTypedArray())
 
         cursor.close()
     }.flowOn(dispatcher)

@@ -5,8 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.musicplayer.databinding.ActivityMainBinding
-import com.example.musicplayer.ui.MyFragmentStateAdapter
-import com.example.musicplayer.ui.tracks.FragmentTracks
+import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

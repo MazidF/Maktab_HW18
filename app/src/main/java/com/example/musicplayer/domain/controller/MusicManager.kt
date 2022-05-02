@@ -1,12 +1,12 @@
-package com.example.musicplayer.ui.activity.main
+package com.example.musicplayer.domain.controller
 
 import android.media.MediaPlayer
-import android.media.MediaPlayer.*
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
 
-object MusicManager : OnPreparedListener, OnCompletionListener, OnErrorListener {
+object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnErrorListener {
 
     private val player: MediaPlayer = MediaPlayer().apply {
         setOnCompletionListener(this@MusicManager)
@@ -18,11 +18,11 @@ object MusicManager : OnPreparedListener, OnCompletionListener, OnErrorListener 
     private var shuffle: List<Int>? = null
 
     override fun onPrepared(player: MediaPlayer) {
-        next()
+        start()
     }
 
     override fun onCompletion(player: MediaPlayer) {
-        TODO("Not yet implemented")
+        next()
     }
 
     override fun onError(player: MediaPlayer, what: Int, extra: Int): Boolean {
@@ -98,8 +98,6 @@ object MusicManager : OnPreparedListener, OnCompletionListener, OnErrorListener 
 
     private fun reset() {
         player.reset()
-//        musicHandler.setValue(MusicHandler())
-        // handler should change music not it's self
     }
 
     fun getMusicCurrentTime(): Int {

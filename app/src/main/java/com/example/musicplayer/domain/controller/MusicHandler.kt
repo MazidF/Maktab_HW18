@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui.activity.main
+package com.example.musicplayer.domain.controller
 
 import com.example.musicplayer.data.model.Music
 
@@ -7,10 +7,6 @@ class MusicHandler {
     var isPlaying = false
 
     fun hasBeenSetup() = this::music.isInitialized
-
-    fun getImagePath() {
-
-    }
 
     fun changeMusic(music: Music) {
         this.music = music
