@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_gravity="end">
+    android:layout_gravity="end"
+    android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alphabet_list"
-        android:layout_gravity="end"
-        android:background="@drawable/alphabet_list"
         android:layout_width="20dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:background="@drawable/alphabet_list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <SeekBar
-        android:thumb="@drawable/scrollbar_thumb"
+    <com.example.musicplayer.utils.views.vertical_seekbar.VerticalSeekBar
         android:id="@+id/alphabet_seekbar"
-        android:layout_width="26dp"
-        android:layout_height="match_parent" />
-</FrameLayout>
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:max="25"
+        android:progress="0"
+        android:rotation="180"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/alphabet_name"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="50dp"
+        android:background="@drawable/circle"
+        android:gravity="center"
+        android:text="A"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

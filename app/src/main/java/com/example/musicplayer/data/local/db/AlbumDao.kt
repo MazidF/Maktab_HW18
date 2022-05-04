@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.musicplayer.data.model.Album
+import com.example.musicplayer.ui.model.AlbumInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,5 +21,8 @@ abstract class AlbumDao : IDao<Album, Long>(Album.TABLE_NAME) {
 
     @Query("select count(*) from album_table")
     abstract override suspend fun getCount(): Int
+
+    @Query("select * from album_table")
+    abstract fun getAlbumsInfo(): Flow<List<AlbumInfo>>
 }
 

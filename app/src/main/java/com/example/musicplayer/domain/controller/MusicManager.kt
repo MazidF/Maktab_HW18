@@ -1,5 +1,6 @@
 package com.example.musicplayer.domain.controller
 
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
@@ -11,6 +12,12 @@ object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLi
     private val player: MediaPlayer = MediaPlayer().apply {
         setOnCompletionListener(this@MusicManager)
         setOnPreparedListener(this@MusicManager)
+        setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build()
+        )
     }
     private val musicHandler = LiveDataWrapper<MusicHandler>()
     private var currentPosition = LiveDataWrapper(-1)

@@ -6,10 +6,12 @@ import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.data.repository.MusicRepository
 import com.example.musicplayer.di.annotations.HasBeenLoaded
+import com.example.musicplayer.ui.model.AlbumInfo
 import com.example.musicplayer.utils.StateFlowWrapper
 import com.example.musicplayer.utils.loaded
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -54,4 +56,7 @@ class MusicUseCase (
     val albumStateFlow = StateFlowWrapper<List<Album>>(emptyList())
     val artistStateFlow = StateFlowWrapper<List<Artist>>(emptyList())
 
+    fun getAlbumsInfo(): Flow<List<AlbumInfo>> {
+        return repository.getAlbumsInfo()
+    }
 }

@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
 )
 data class Music(
     @ColumnInfo(name = "music_name") val name: String,
-    @ColumnInfo(name = "music_time") val time: String,
+    @ColumnInfo(name = "music_time") val time: Int,
     @ColumnInfo(name = "music_data") val data: String,
     @ColumnInfo(name = "music_album_id") val albumId: Long,
     @ColumnInfo(name = "music_artist_id") val artistId: Long,
@@ -30,7 +30,7 @@ data class Music(
         val empty by lazy {
             Music(
                 name = "",
-                time = "",
+                time = 0,
                 data = "",
                 albumId = -1,
                 artistId = -1,

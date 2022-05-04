@@ -14,6 +14,7 @@ import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.di.annotations.DispatcherIO
+import com.example.musicplayer.ui.model.AlbumInfo
 import com.example.musicplayer.utils.*
 import kotlinx.coroutines.flow.*
 import java.io.File
@@ -90,7 +91,7 @@ class MusicLocalRepository @Inject constructor(
                 emit(
                     Music(
                         name = songName,
-                        time = (time / 1000).timeFormatter(),
+                        time = time,
                         data = path,
                         artistId = artistId,
                         albumId = albumId
@@ -114,15 +115,19 @@ class MusicLocalRepository @Inject constructor(
     }
 
     fun getAllMusics(): Flow<List<Music>> {
-        return musicDataSource.getItems()
+        return musicDataSource.getItems().flowOn(dispatcher)
     }
 
     fun getAllAlbums(): Flow<List<Album>> {
-        return albumDataSource.getItems()
+        return albumDataSource.getItems().flowOn(dispatcher)
     }
 
     fun getAllArtists(): Flow<List<Artist>> {
-        return artistDataSource.getItems()
+        return artistDataSource.getItems().flowOn(dispatcher)
+    }
+
+    fun getAlbumsInfo(): Flow<List<AlbumInfo>> {
+        return albumDataSource.getAlbumsInfo().flowOn(dispatcher)
     }
 
 }

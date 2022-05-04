@@ -2,45 +2,28 @@ package com.example.musicplayer.ui.fragment.tracks
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
+import com.example.musicplayer.ui.fragment.MusicItemAdapter
 import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.setup
 
 class MusicTracksItemAdapter(
     private val onClick: () -> Unit = {}
-) : ListAdapter<Music, MusicTracksItemAdapter.MusicHolder>(
-    DIFF_ITEM_CALLBACK
-) {
+) : MusicItemAdapter() {
 
-    companion object {
-        val DIFF_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Music>() {
-            override fun areItemsTheSame(oldItem: Music, newItem: Music): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: Music, newItem: Music): Boolean {
-                return oldItem == newItem
-            }
-
-        }
-    }
-
-    inner class MusicHolder(
+    private inner class MusicTracksHolder(
         private val binding: MusicItemTracksBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    ) : MusicHolder(binding) {
         init {
             with(binding) {
                 musicItemSelect.setup()
             }
         }
 
-        fun bind(music: Music) = with(binding) {
+        override fun bind(music: Music): Unit = with(binding) {
             musicItemName.text = music.name
             Glide.with(root)
                 .load(Constants.ALBUM_ART_PATH + "/" + music.albumId)
@@ -51,11 +34,11 @@ class MusicTracksItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {
         val binding = MusicItemTracksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MusicHolder(binding)
+        return MusicTracksHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MusicHolder, position: Int) {
-        holder.bind(getItem(position))
+    fun scrollToFirst(filter: (Music) -> Boolean, block: (Int) -> Unit) {
+        val index = currentList.indexOfFirst(filter)
+        block(index)
     }
-
 }

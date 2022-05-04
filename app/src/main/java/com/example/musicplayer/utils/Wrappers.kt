@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class LiveDataWrapper<T>(t: T? = null) {
     private val liveData by lazy {
@@ -38,6 +40,7 @@ class LiveDataWrapper<T>(t: T? = null) {
     }
 }
 
+// TODO: change this useless class
 class StateFlowWrapper<T>(t: T) {
     private val stateFlow by lazy {
         MutableStateFlow(t)

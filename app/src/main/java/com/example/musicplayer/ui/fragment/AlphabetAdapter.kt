@@ -1,9 +1,10 @@
 package com.example.musicplayer.ui.fragment
 
+import android.annotation.SuppressLint
 import android.view.Gravity
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.*
-import android.widget.ListAdapter
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -11,6 +12,7 @@ class AlphabetAdapter(
     private val alphabet: List<Char>
 ) : RecyclerView.Adapter<AlphabetAdapter.CharHolder>() {
 
+    @SuppressLint("ClickableViewAccessibility")
     inner class CharHolder(private val textView: TextView) : RecyclerView.ViewHolder(textView) {
         init {
             textView.apply {

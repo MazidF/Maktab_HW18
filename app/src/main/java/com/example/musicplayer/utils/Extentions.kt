@@ -1,20 +1,26 @@
 package com.example.musicplayer.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.RadioButton
+import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
+import com.example.musicplayer.databinding.AlphabetSeekbarBinding
+import com.example.musicplayer.ui.fragment.AlphabetAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -33,6 +39,8 @@ fun Int.timeFormatter(): String {
         "$hour:${stringFormatter(min)}"
     }
 }
+
+fun Int.secondToTimeFormatter() = (this / 1000).timeFormatter()
 
 fun stringFormatter(number: Int, length: Int = 2): String {
     return String.format("%0${length}d", number)
@@ -170,4 +178,86 @@ fun RadioButton.setup() {
             isChecked = true
         }
     }
+}
+
+fun RecyclerView.smoothSnapToPosition(
+    position: Int,
+    snapMode: Int = LinearSmoothScroller.SNAP_TO_START
+) {
+    val smoothScroller = object : LinearSmoothScroller(this.context) {
+        override fun getVerticalSnapPreference(): Int = snapMode
+        override fun getHorizontalSnapPreference(): Int = snapMode
+    }
+    smoothScroller.targetPosition = position
+    layoutManager?.startSmoothScroll(smoothScroller)
+}
+
+fun logger(msg: String, tag: String = "app_logger") {
+    Log.d(tag, msg)
+}
+
+fun getAlphabet(context: Context): List<Char> {
+    return if (context.isLandScape()) {
+        ('A'..'Z' step 4).toList() + listOf('Z')
+    } else {
+        ('A'..'Z').toList()
+    }
+}
+
+fun createAlphabetSeekbar(
+    binding: AlphabetSeekbarBinding,
+    cb: (Char) -> Unit
+) {
+    with(binding) {
+        val context = root.context
+        alphabetList.apply {
+            val list = getAlphabet(context)
+            adapter = AlphabetAdapter(list)
+            layoutManager = GridLayoutManager(context, list.size).apply {
+                orientation = GridLayoutManager.HORIZONTAL
+            }
+            alphabetSeekbar.visibleCallback = {
+                alphabetName.isVisible = it
+            }
+            alphabetSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                val length by lazy {
+                    alphabetSeekbar.height / (alphabetSeekbar.max + 1)
+                }
+
+                val minY by lazy {
+                    alphabetList.y
+                }
+
+                val maxY by lazy {
+                    minY + alphabetList.height
+                }
+
+                @SuppressLint("SetTextI18n")
+                override fun onProgressChanged(seekbar: SeekBar, progress: Int, fromUser: Boolean) {
+                    val y =
+                        seekbar.y + (progress * (alphabetSeekbar.height / (alphabetSeekbar.max + 1))) - alphabetName.height / 2
+                    alphabetName.y = if (y > maxY) {
+                        maxY
+                    } else if (y < minY) {
+                        minY
+                    } else {
+                        y
+                    }
+                    alphabetName.text = ('A' + progress).toString()
+                    cb(list[progress]) // TODO: check why fromUser is always false
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {
+                    println()
+                }
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {
+                    println()
+                }
+
+            })
+        }
+
+    }
+
 }

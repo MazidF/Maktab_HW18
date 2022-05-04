@@ -5,6 +5,7 @@ import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.di.annotations.DispatcherIO
+import com.example.musicplayer.ui.model.AlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -32,6 +33,10 @@ class MusicRepository(
 
     fun getAllArtists(): Flow<List<Artist>> {
         return local.getAllArtists()
+    }
+
+    fun getAlbumsInfo(): Flow<List<AlbumInfo>> {
+        return local.getAlbumsInfo()
     }
 
 }

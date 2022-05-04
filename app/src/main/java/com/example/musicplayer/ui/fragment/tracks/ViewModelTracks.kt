@@ -13,18 +13,5 @@ import javax.inject.Inject
 class ViewModelTracks @Inject constructor(
     private val useCase: MusicUseCase
 ): ViewModel() {
-
-    init {
-        getMusics()
-    }
-
-    val musicsStateFlow = StateFlowWrapper<List<Music>>(emptyList())
-
-    private fun getMusics() {
-        viewModelScope.launch {
-            useCase.musicStateFlow.collect {
-                musicsStateFlow.emit(it)
-            }
-        }
-    }
+    val musicsStateFlow = useCase.musicStateFlow
 }
