@@ -1,12 +1,16 @@
 package com.example.musicplayer.service
 
 import android.content.Intent
+import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.MediaBrowserCompat
 import androidx.media.MediaBrowserServiceCompat
 
 class MediaPlaybackService : MediaBrowserServiceCompat() {
+    private val binder by lazy {
+        MusicServiceBinder()
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -14,11 +18,12 @@ class MediaPlaybackService : MediaBrowserServiceCompat() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
+
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+        return binder
     }
 
     override fun onGetRoot(
@@ -34,5 +39,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat() {
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
         TODO("Not yet implemented")
+    }
+
+    inner class MusicServiceBinder: Binder() {
+        fun requestServiceTo(block: MediaPlaybackService.() -> Unit) {
+            block(this@MediaPlaybackService)
+        }
     }
 }

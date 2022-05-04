@@ -1,17 +1,28 @@
 package com.example.musicplayer.ui.fragment
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.musicplayer.data.model.Music
-import com.example.musicplayer.databinding.MusicItemTracksBinding
+import com.example.musicplayer.utils.logger
+import java.util.*
 
-abstract class MusicItemAdapter : ListAdapter<Music, MusicItemAdapter.MusicHolder>(
+abstract class MusicItemAdapter: ListAdapter<Music, MusicItemAdapter.MusicHolder>(
     DIFF_ITEM_CALLBACK
 ) {
+
+    final override fun setHasStableIds(hasStableIds: Boolean) {
+        super.setHasStableIds(hasStableIds)
+    }
+
+    protected var isSelecting = MutableLiveData<Boolean>()
+    fun isSelecting() = isSelecting.value == true
+
+    private val selectedSet by lazy {
+        TreeSet<Int>()
+    }
 
     companion object {
         val DIFF_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Music>() {
@@ -22,19 +33,48 @@ abstract class MusicItemAdapter : ListAdapter<Music, MusicItemAdapter.MusicHolde
             override fun areContentsTheSame(oldItem: Music, newItem: Music): Boolean {
                 return oldItem == newItem
             }
-
         }
     }
 
     abstract inner class MusicHolder(
         private val binding: ViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        abstract fun bind(music: Music)
+        init {
+            isSelecting.observeForever {
+                logger("$absoluteAdapterPosition , $adapterPosition, $bindingAdapterPosition")
+                onSelectingChange(it == true)
+            }
+            binding.root.setOnLongClickListener {
+                if (!isSelecting()) {
+                    isSelecting.value = true
+                }
+                false
+            }
+        }
+
+        fun select() {
+            selectedSet.add(adapterPosition)
+        }
+
+        fun unselect() {
+            selectedSet.remove(adapterPosition)
+        }
+
+        abstract fun onSelectingChange(isSelecting: Boolean)
+
+        abstract fun bind(music: Music, isSelected: Boolean)
     }
 
+    fun selectAll(selected: Boolean) {
+        if (selected) {
+            selectedSet.addAll(List(itemCount) {it})
+        } else {
+            selectedSet.clear()
+        }
+        isSelecting.value = selected
+    }
 
     override fun onBindViewHolder(holder: MusicHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), selectedSet.contains(position))
     }
-
 }

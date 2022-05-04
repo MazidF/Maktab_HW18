@@ -5,7 +5,7 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.musicplayer.data.model.Album
-import com.example.musicplayer.ui.model.AlbumInfo
+import com.example.musicplayer.data.model.AlbumInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao

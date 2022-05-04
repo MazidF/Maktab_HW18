@@ -3,7 +3,7 @@ package com.example.musicplayer.ui.fragment.albums
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicplayer.domain.MusicUseCase
-import com.example.musicplayer.ui.model.AlbumInfo
+import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.utils.StateFlowWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

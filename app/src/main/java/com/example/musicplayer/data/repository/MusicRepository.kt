@@ -4,8 +4,7 @@ import android.content.Context
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
-import com.example.musicplayer.di.annotations.DispatcherIO
-import com.example.musicplayer.ui.model.AlbumInfo
+import com.example.musicplayer.data.model.AlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn

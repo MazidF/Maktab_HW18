@@ -1,9 +1,7 @@
-package com.example.musicplayer.ui.model
+package com.example.musicplayer.data.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.musicplayer.data.model.Album
-import com.example.musicplayer.data.model.Music
 import java.io.Serializable
 
 data class AlbumInfo(

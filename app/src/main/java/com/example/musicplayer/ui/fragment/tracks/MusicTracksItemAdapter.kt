@@ -7,8 +7,7 @@ import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
-import com.example.musicplayer.utils.Constants
-import com.example.musicplayer.utils.setup
+import com.example.musicplayer.utils.*
 
 class MusicTracksItemAdapter(
     private val onClick: () -> Unit = {}
@@ -19,21 +18,43 @@ class MusicTracksItemAdapter(
     ) : MusicHolder(binding) {
         init {
             with(binding) {
-                musicItemSelect.setup()
+                musicItemSelect.setup {
+                    if (isSelected) {
+                        select()
+                    } else {
+                        unselect()
+                    }
+                }
             }
         }
 
-        override fun bind(music: Music): Unit = with(binding) {
-            musicItemName.text = music.name
-            Glide.with(root)
-                .load(Constants.ALBUM_ART_PATH + "/" + music.albumId)
-                .error(R.drawable.music_player_icon)
-                .into(musicItemImage)
+        override fun onSelectingChange(isSelecting: Boolean) {
+            with(binding) {
+                if (isSelecting) {
+                    musicItemMore.gone()
+                    musicItemSelect.visible()
+                } else {
+                    musicItemSelect.gone()
+                    musicItemMore.visible()
+                }
+            }
+        }
+
+        override fun bind(music: Music, isSelected: Boolean) {
+            with(binding) {
+                musicItemName.text = music.name
+                Glide.with(root)
+                    .load(Constants.ALBUM_ART_PATH + "/" + music.albumId)
+                    .error(R.drawable.music_player_icon)
+                    .into(musicItemImage)
+                musicItemSelect.set(isSelected)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {
-        val binding = MusicItemTracksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            MusicItemTracksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MusicTracksHolder(binding)
     }
 

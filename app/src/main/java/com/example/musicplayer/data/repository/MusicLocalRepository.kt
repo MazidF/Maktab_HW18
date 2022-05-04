@@ -3,10 +3,6 @@ package com.example.musicplayer.data.repository
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import com.example.musicplayer.data.local.AlbumLocalDataSource
 import com.example.musicplayer.data.local.ArtistLocalDataSource
 import com.example.musicplayer.data.local.MusicLocalDataSource
@@ -14,10 +10,9 @@ import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.di.annotations.DispatcherIO
-import com.example.musicplayer.ui.model.AlbumInfo
+import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.utils.*
 import kotlinx.coroutines.flow.*
-import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 

@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentAlbumsBinding
 import com.example.musicplayer.ui.fragment.main.FragmentMainDirections
-import com.example.musicplayer.ui.model.AlbumInfo
+import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.utils.repeatLaunchOnState
 import dagger.hilt.android.AndroidEntryPoint
 

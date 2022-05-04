@@ -22,9 +22,7 @@ class FragmentAlbumList : Fragment(R.layout.fragment_album_list) {
 
     private fun init() = with(binding) {
         albumAdapter = MusicAlbumsItemAdapter()
-        albumList.apply {
-            adapter = albumAdapter
-        }
+        albumList.adapter = albumAdapter
         albumAdapter.submitList(args.info.musics)
     }
 

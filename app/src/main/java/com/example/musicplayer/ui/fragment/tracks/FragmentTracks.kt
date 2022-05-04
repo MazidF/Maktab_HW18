@@ -31,7 +31,9 @@ class FragmentTracks : Fragment(R.layout.fragment_tracks) {
 
     private fun init() = with(binding) {
         musicAdapter = MusicTracksItemAdapter()
-        trackList.adapter = musicAdapter
+        trackList.apply {
+            setItemViewCacheSize(5)
+        }.adapter = musicAdapter
         createAlphabetSeekbar(trackScrollbar) { char ->
             musicAdapter.scrollToFirst({
                 it.name.uppercase().first() == char

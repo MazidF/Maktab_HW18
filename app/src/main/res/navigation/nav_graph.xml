@@ -18,7 +18,7 @@
         android:label="FragmentAlbumList" >
         <argument
             android:name="info"
-            app:argType="com.example.musicplayer.ui.model.AlbumInfo" />
+            app:argType="com.example.musicplayer.data.model.AlbumInfo" />
     </fragment>
     <fragment
         tools2:layout="@layout/fragment_albums"

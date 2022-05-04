@@ -166,9 +166,8 @@ fun Context.isLandScape(): Boolean {
     return getOrientation() == Configuration.ORIENTATION_LANDSCAPE
 }
 
-fun RadioButton.setup() {
-    isSelected = false
-    isChecked = false
+fun RadioButton.setup(block: RadioButton.() -> Unit = {}) {
+    set(false)
     setOnClickListener {
         if (isSelected) {
             isSelected = false
@@ -177,7 +176,13 @@ fun RadioButton.setup() {
             isSelected = true
             isChecked = true
         }
+        block()
     }
+}
+
+fun RadioButton.set(value: Boolean) {
+    isSelected = value
+    isChecked = value
 }
 
 fun RecyclerView.smoothSnapToPosition(
