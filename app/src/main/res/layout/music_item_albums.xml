@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:layout_marginBottom="4dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:selectableItemBackground"
-    android:gravity="end|center_vertical"
+    android:gravity="end|center"
     android:paddingStart="15dp"
     android:paddingTop="10dp"
-    android:paddingEnd="10dp"
+    android:paddingEnd="8dp"
     android:paddingBottom="10dp">
 
     <RadioButton
         android:visibility="gone"
         android:id="@+id/music_item_select"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/music_item_name"
         style="@style/singleLineTextView"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textSize="16dp"
         android:gravity="start"
         android:text="Alireza.RoozegarAlireza.RoozegarAlireza.Roozegar"
         android:textColor="@color/black" />
@@ -34,8 +35,8 @@
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="3:04"
-        android:textSize="11dp"
+        android:text=" 3:04"
+        android:textSize="12dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"/>
 
@@ -44,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
         android:src="@drawable/ic_more_vertical" />
 
 </LinearLayout>

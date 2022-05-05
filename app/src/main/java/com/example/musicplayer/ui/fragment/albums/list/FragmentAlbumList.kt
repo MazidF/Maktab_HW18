@@ -6,9 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentAlbumListBinding
+import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.utils.Mapper.toSelectableMusic
 
-class FragmentAlbumList : Fragment(R.layout.fragment_album_list) {
+class FragmentAlbumList : FragmentWithOnBackListener(R.layout.fragment_album_list) {
     private val args: FragmentAlbumListArgs by navArgs()
     private lateinit var albumAdapter: MusicAlbumsItemAdapter
     private var _binding: FragmentAlbumListBinding? = null
@@ -30,6 +31,14 @@ class FragmentAlbumList : Fragment(R.layout.fragment_album_list) {
     }
 
     private fun observer() {}
+
+    override fun onBackPressed(): Boolean {
+        if (albumAdapter.isSelecting()) {
+            albumAdapter.removeSelection()
+            return true
+        }
+        return false
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

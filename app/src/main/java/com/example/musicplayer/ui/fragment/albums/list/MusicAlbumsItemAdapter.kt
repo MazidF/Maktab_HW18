@@ -3,6 +3,8 @@ package com.example.musicplayer.ui.fragment.albums.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
+import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemAlbumsBinding
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
@@ -30,10 +32,14 @@ class MusicAlbumsItemAdapter(
             binding.musicItemSelect.performClick()
         }
 
+        private fun baseBind(music: Music) = with(binding) {
+            musicItemName.text = music.name
+            musicItemTime.text = music.time.secondToTimeFormatter()
+        }
+
         override fun bind(music: Music) {
             with(binding) {
-                musicItemName.text = music.name
-                musicItemTime.text = music.time.secondToTimeFormatter()
+                baseBind(music)
                 if (wasSelecting) {
                     musicItemSelect.gone()
                     musicItemMore.visible()
@@ -45,12 +51,16 @@ class MusicAlbumsItemAdapter(
         override fun bind(selectableMusic: SelectableMusic) {
             val isSelected = selectableMusic.isSelected
             with(binding) {
-                if (isSelected == null) {
+                if (isSelected == null || !wasSelecting) {
                     musicItemMore.gone()
                     musicItemSelect.visible()
                     wasSelecting = true
-                    selectableMusic.isSelected = false
+                    if (isSelected == null) {
+                        selectableMusic.isSelected = false
+                    }
                 }
+                val music = selectableMusic.music
+                baseBind(music)
                 musicItemSelect.set(selectableMusic.isSelected!!)
             }
         }

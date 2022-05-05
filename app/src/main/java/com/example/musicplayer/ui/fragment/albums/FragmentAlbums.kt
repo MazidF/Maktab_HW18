@@ -10,11 +10,12 @@ import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentAlbumsBinding
 import com.example.musicplayer.ui.fragment.main.FragmentMainDirections
 import com.example.musicplayer.data.model.AlbumInfo
+import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.utils.repeatLaunchOnState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentAlbums : Fragment(R.layout.fragment_albums) {
+class FragmentAlbums : FragmentWithBackPress(R.layout.fragment_albums) {
 
     private val navController by lazy {
         findNavController()
@@ -57,6 +58,9 @@ class FragmentAlbums : Fragment(R.layout.fragment_albums) {
         }
     }
 
+    override fun handleOnBackPressed(): Boolean {
+        return true
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

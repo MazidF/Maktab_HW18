@@ -1,20 +1,29 @@
 package com.example.musicplayer.ui.fragment.main
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentMainBinding
 import com.example.musicplayer.ui.activity.main.MyFragmentStateAdapter
 import com.example.musicplayer.ui.activity.main.ZoomOutPageTransformer
+import com.example.musicplayer.ui.fragment.FragmentWithBackPress
+import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.ui.fragment.albums.FragmentAlbums
 import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
 import com.google.android.material.tabs.TabLayoutMediator
 
-class FragmentMain : Fragment(R.layout.fragment_main) {
+class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    private val fragments = listOf<FragmentWithBackPress>(
+        FragmentTracks::class.java.newInstance(),
+        FragmentAlbums::class.java.newInstance()
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,13 +33,9 @@ class FragmentMain : Fragment(R.layout.fragment_main) {
 
     private fun init() = with(binding) {
         viewpager.apply {
-            val list = listOf<Fragment>(
-                FragmentTracks::class.java.newInstance(),
-                FragmentAlbums::class.java.newInstance()
-            )
             adapter = MyFragmentStateAdapter(
                 this@FragmentMain,
-                fragments = list
+                fragments = fragments
             )
             setPageTransformer(ZoomOutPageTransformer())
         }
@@ -38,6 +43,14 @@ class FragmentMain : Fragment(R.layout.fragment_main) {
         TabLayoutMediator(tab, viewpager) { tab, pos ->
             tab.text = tabNames[pos]
         }.attach()
+    }
+
+    override fun onBackPressed(): Boolean {
+        var result = true
+        for (fragment in fragments) {
+            result = result.and(fragment.handleOnBackPressed())
+        }
+        return result
     }
 
     override fun onDestroy() {
