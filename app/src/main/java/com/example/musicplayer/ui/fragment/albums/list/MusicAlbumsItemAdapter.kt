@@ -6,44 +6,52 @@ import androidx.core.view.isVisible
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemAlbumsBinding
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
+import com.example.musicplayer.ui.model.SelectableMusic
 import com.example.musicplayer.utils.*
 
 class MusicAlbumsItemAdapter(
-    private val onClick: (Unit) -> Unit = {}
+    private val onClick: () -> Unit = {}
 ) : MusicItemAdapter() {
 
     private inner class MusicAlbumHolder(
         private val binding: MusicItemAlbumsBinding
     ) : MusicHolder(binding) {
+        private var wasSelecting = false
+
         init {
             with(binding) {
                 musicItemSelect.setup {
-                    if (isSelected) {
-                        select()
-                    } else {
-                        unselect()
-                    }
+                    selectOrUnselect()
                 }
             }
         }
 
-        override fun onSelectingChange(isSelecting: Boolean) {
-            with(binding) {
-                if (isSelecting) {
-                    musicItemMore.gone()
-                    musicItemSelect.visible()
-                } else {
-                    musicItemSelect.gone()
-                    musicItemMore.visible()
-                }
-            }
+        override fun manualSelect() {
+            binding.musicItemSelect.performClick()
         }
 
-        override fun bind(music: Music, isSelected: Boolean) {
+        override fun bind(music: Music) {
             with(binding) {
                 musicItemName.text = music.name
                 musicItemTime.text = music.time.secondToTimeFormatter()
-                musicItemSelect.set(isSelected)
+                if (wasSelecting) {
+                    musicItemSelect.gone()
+                    musicItemMore.visible()
+                    wasSelecting = false
+                }
+            }
+        }
+
+        override fun bind(selectableMusic: SelectableMusic) {
+            val isSelected = selectableMusic.isSelected
+            with(binding) {
+                if (isSelected == null) {
+                    musicItemMore.gone()
+                    musicItemSelect.visible()
+                    wasSelecting = true
+                    selectableMusic.isSelected = false
+                }
+                musicItemSelect.set(selectableMusic.isSelected!!)
             }
         }
     }
@@ -52,5 +60,9 @@ class MusicAlbumsItemAdapter(
         val binding =
             MusicItemAlbumsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MusicAlbumHolder(binding)
+    }
+
+    override fun onClickItem() {
+        onClick()
     }
 }

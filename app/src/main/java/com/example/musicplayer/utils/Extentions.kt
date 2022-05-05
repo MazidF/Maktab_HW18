@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -264,5 +267,14 @@ fun createAlphabetSeekbar(
         }
 
     }
+}
 
+fun Context.vibrate(duration: Long = 500): Boolean {
+    val v = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator ?: return false
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        v.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+    } else {
+        v.vibrate(duration)
+    }
+    return true
 }

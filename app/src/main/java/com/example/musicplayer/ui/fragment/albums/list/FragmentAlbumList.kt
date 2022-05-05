@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentAlbumListBinding
+import com.example.musicplayer.utils.Mapper.toSelectableMusic
 
 class FragmentAlbumList : Fragment(R.layout.fragment_album_list) {
     private val args: FragmentAlbumListArgs by navArgs()
@@ -23,7 +24,9 @@ class FragmentAlbumList : Fragment(R.layout.fragment_album_list) {
     private fun init() = with(binding) {
         albumAdapter = MusicAlbumsItemAdapter()
         albumList.adapter = albumAdapter
-        albumAdapter.submitList(args.info.musics)
+        albumAdapter.submitList(args.info.musics.map {
+            it.toSelectableMusic()
+        })
     }
 
     private fun observer() {}

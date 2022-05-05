@@ -44,6 +44,7 @@ class AlbumItemAdapter(
             albumItemInfo.text = "${item.musics.size} tracks"
             albumItemName.text = item.album.name
             Glide.with(root)
+                .applyDefaultRequestOptions(Constants.glideDiskCacheStrategy)
                 .load(Constants.ALBUM_ART_PATH + "/" + item.album.id)
                 .error(R.drawable.music_player_icon) // TODO: change Unknown icon
                 .into(albumItemImage)

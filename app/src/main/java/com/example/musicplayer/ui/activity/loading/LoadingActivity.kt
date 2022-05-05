@@ -36,13 +36,12 @@ class LoadingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        binding.root.animate().alpha(1f).withEndAction {
-//            thread {
-//                Thread.sleep(1000)
-//                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-//            }
-//        }.duration = 2000
-        permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        binding.root.animate().alpha(1f).withEndAction {
+            thread {
+                Thread.sleep(1000)
+                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+        }.duration = 2000
     }
 
 }

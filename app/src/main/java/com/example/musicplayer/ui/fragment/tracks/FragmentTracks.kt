@@ -7,13 +7,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentTracksBinding
+import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.utils.createAlphabetSeekbar
 import com.example.musicplayer.utils.repeatLaunchOnState
 import com.example.musicplayer.utils.smoothSnapToPosition
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentTracks : Fragment(R.layout.fragment_tracks) {
+class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
 
     private lateinit var musicAdapter: MusicTracksItemAdapter
 
@@ -31,9 +32,7 @@ class FragmentTracks : Fragment(R.layout.fragment_tracks) {
 
     private fun init() = with(binding) {
         musicAdapter = MusicTracksItemAdapter()
-        trackList.apply {
-            setItemViewCacheSize(5)
-        }.adapter = musicAdapter
+        trackList.adapter = musicAdapter
         createAlphabetSeekbar(trackScrollbar) { char ->
             musicAdapter.scrollToFirst({
                 it.name.uppercase().first() == char
@@ -51,6 +50,14 @@ class FragmentTracks : Fragment(R.layout.fragment_tracks) {
                 musicAdapter.submitList(it)
             }
         }
+    }
+
+    override fun handleOnBackPressed(): Boolean {
+        if (musicAdapter.isSelecting()) {
+            musicAdapter.removeSelection()
+            return true
+        }
+        return false
     }
 
     override fun onDestroyView() {
