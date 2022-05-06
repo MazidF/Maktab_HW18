@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
+import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +21,7 @@ abstract class ArtistDao : IDao<Artist, Long>(Artist.TABLE_NAME) {
 
     @Query("select count(*) from artist_table")
     abstract override suspend fun getCount(): Int
+
+    @Query("select * from artist_table limit :from, :perPage")
+    abstract override suspend fun getItems(from: Int, perPage: Int): List<Artist>
 }

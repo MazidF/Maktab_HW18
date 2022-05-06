@@ -1,4 +1,4 @@
-package com.example.musicplayer.service
+package com.example.musicplayer.service.licent_service
 
 import android.content.Intent
 import android.os.Binder

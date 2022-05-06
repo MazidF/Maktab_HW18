@@ -15,6 +15,7 @@
 
     <RadioButton
         android:visibility="gone"
+        android:buttonTint="@color/text_color_gray"
         android:id="@+id/music_item_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

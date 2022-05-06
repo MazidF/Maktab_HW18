@@ -3,6 +3,8 @@ package com.example.musicplayer.data.repository
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.example.musicplayer.data.local.AlbumLocalDataSource
 import com.example.musicplayer.data.local.ArtistLocalDataSource
 import com.example.musicplayer.data.local.MusicLocalDataSource
@@ -125,4 +127,12 @@ class MusicLocalRepository @Inject constructor(
         return albumDataSource.getAlbumsInfo().flowOn(dispatcher)
     }
 
+    fun getAllMusicPaging(config: PagedList.Config): LivePagedListBuilder<Long, Music> {
+        val factory = musicDataSource.getItemsPaging()
+        return LivePagedListBuilder(factory, config)
+    }
+
+    suspend fun getMusics(from: Int, parPage: Int): List<Music> {
+        return musicDataSource.getItems(from, parPage)
+    }
 }

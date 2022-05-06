@@ -28,6 +28,10 @@ abstract class ILocalDataSource<Item, PrimaryKey>(
         return dao.getItems()
     }
 
+    suspend fun getItems(from: Int, perPage: Int): List<Item> {
+        return dao.getItems(from, perPage)
+    }
+
     suspend fun getCount(): Int {
         return dao.getCount()
     }

@@ -1,5 +1,6 @@
 package com.example.musicplayer.data.local
 
+import androidx.paging.DataSource
 import com.example.musicplayer.data.local.db.MusicDao
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
@@ -12,10 +13,10 @@ import kotlin.coroutines.CoroutineContext
 class MusicLocalDataSource @Inject constructor(
     private val dao: MusicDao,
     @DispatcherIO private val dispatcher: CoroutineContext,
-): ILocalDataSource<Music, Long>(dao) {
+) : ILocalDataSource<Music, Long>(dao) {
 
     override fun <T> search(query: T): Flow<Music>? {
-        return when(query) {
+        return when (query) {
             is String -> {
                 dao.searchByName(query)
             }
@@ -27,5 +28,9 @@ class MusicLocalDataSource @Inject constructor(
             }
             else -> null
         }
+    }
+
+    fun getItemsPaging(): DataSource.Factory<Long, Music> {
+        return dao.getItemsPaging()
     }
 }

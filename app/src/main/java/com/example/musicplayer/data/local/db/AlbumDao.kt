@@ -24,5 +24,8 @@ abstract class AlbumDao : IDao<Album, Long>(Album.TABLE_NAME) {
 
     @Query("select * from album_table")
     abstract fun getAlbumsInfo(): Flow<List<AlbumInfo>>
+
+    @Query("select * from album_table limit :from, :perPage")
+    abstract override suspend fun getItems(from: Int, perPage: Int): List<Album>
 }
 

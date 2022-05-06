@@ -12,4 +12,9 @@ object Constants {
     const val ALBUM_ART_PATH = "content://media/external/audio/albumart"
 
     val glideDiskCacheStrategy = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+
+    const val musicPagingSize = 20
+    const val musicPagingInitialLoadSize = 30
+    const val musicPagingPrefetchDistance = 10
+    const val musicPagingMaxSize = 100
 }

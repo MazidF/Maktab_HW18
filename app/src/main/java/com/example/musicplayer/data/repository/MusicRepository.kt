@@ -1,6 +1,8 @@
 package com.example.musicplayer.data.repository
 
 import android.content.Context
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
@@ -38,4 +40,11 @@ class MusicRepository(
         return local.getAlbumsInfo()
     }
 
+    fun getAllMusicsPaging(config: PagedList.Config): LivePagedListBuilder<Long, Music> {
+        return local.getAllMusicPaging(config)
+    }
+
+    suspend fun getMusics(from: Int, parPage: Int): List<Music> {
+        return local.getMusics(from, parPage)
+    }
 }

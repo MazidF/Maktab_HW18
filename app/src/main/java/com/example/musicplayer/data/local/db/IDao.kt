@@ -21,6 +21,8 @@ abstract class IDao<Item, PrimaryKey>(
 
     abstract fun getItems(): Flow<List<Item>>
 
+    abstract suspend fun getItems(from: Int, perPage: Int): List<Item>
+
     abstract suspend fun getCount(): Int
 
     @RawQuery

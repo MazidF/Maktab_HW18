@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
         <service
-            android:name=".service.MediaPlaybackService"
+            android:name=".service.licent_service.MediaPlaybackService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
