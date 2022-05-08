@@ -7,16 +7,17 @@ import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
+import com.example.musicplayer.ui.fragment.paging_adapter.MusicPagingAdapter
 import com.example.musicplayer.ui.model.SelectableMusic
 import com.example.musicplayer.utils.*
 
 class MusicTracksItemAdapter(
     private val onClick: () -> Unit = {}
-) : MusicItemAdapter() {
+) : MusicPagingAdapter() {
 
     private inner class MusicTracksHolder(
         private val binding: MusicItemTracksBinding
-    ) : MusicHolder(binding) {
+    ) : MusicPagingHolder(binding) {
         private var wasSelecting = false
 
         init {
@@ -69,16 +70,16 @@ class MusicTracksItemAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicPagingHolder {
         val binding =
             MusicItemTracksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MusicTracksHolder(binding)
     }
 
     fun scrollToFirst(filter: (Music) -> Boolean, block: (Int) -> Unit) {
-        val index = currentList.indexOfFirst {
+        val index = currentList?.indexOfFirst {
             filter(it.music)
-        }
+        } ?: return
         block(index)
     }
 

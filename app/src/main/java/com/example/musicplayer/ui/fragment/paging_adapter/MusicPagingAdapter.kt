@@ -117,4 +117,5 @@ abstract class MusicPagingAdapter : PagedListAdapter<SelectableMusic, MusicPagin
         }
         holder.bind(item.music)
     }
+    abstract fun onClickItem()
 }
