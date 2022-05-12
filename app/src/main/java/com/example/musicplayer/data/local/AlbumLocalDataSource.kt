@@ -12,7 +12,7 @@ class AlbumLocalDataSource @Inject constructor(
     private val dao: AlbumDao,
     @DispatcherIO private val dispatcher: CoroutineContext,
 ) : ILocalDataSource<Album, Long>(dao) {
-    override fun <T> search(query: T): Flow<Album>? {
+    override fun <T> search(query: T): Flow<List<Album>>? {
         return null
     }
 

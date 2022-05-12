@@ -1,5 +1,6 @@
 package com.example.musicplayer.data.local
 
+import androidx.room.Query
 import com.example.musicplayer.data.local.db.MusicDao
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
@@ -14,7 +15,7 @@ class MusicLocalDataSource @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineContext,
 ): ILocalDataSource<Music, Long>(dao) {
 
-    override fun <T> search(query: T): Flow<Music>? {
+    override fun <T> search(query: T): Flow<List<Music>>? {
         return when(query) {
             is String -> {
                 dao.searchByName(query)
@@ -27,5 +28,9 @@ class MusicLocalDataSource @Inject constructor(
             }
             else -> null
         }
+    }
+
+    fun favorites(): Flow<List<Music>> {
+        return dao.favorites()
     }
 }

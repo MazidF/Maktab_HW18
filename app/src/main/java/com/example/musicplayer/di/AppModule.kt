@@ -9,6 +9,7 @@ import com.example.musicplayer.di.annotations.DispatcherIO
 import com.example.musicplayer.di.annotations.DispatcherMain
 import com.example.musicplayer.di.annotations.HasBeenLoaded
 import com.example.musicplayer.domain.MusicUseCase
+import com.example.musicplayer.domain.controller.MusicManager
 import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.hasBeenLoaded
 import com.example.musicplayer.utils.sharedPreferences
@@ -80,6 +81,17 @@ class AppModule {
     @DispatcherDefault
     fun provideDispatcherDefault() : CoroutineContext {
         return Dispatchers.Default
+    }
+
+    @Provides
+    @Singleton
+    fun provideMusicManager(
+
+    ): MusicManager {
+        return MusicManager(
+            musics = ,
+            shuffle = null
+        )
     }
 
 }

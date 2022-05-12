@@ -11,7 +11,7 @@ class ArtistLocalDataSource @Inject constructor(
     private val dao: ArtistDao,
     @DispatcherIO private val dispatcher: CoroutineContext,
 ) : ILocalDataSource<Artist, Long>(dao) {
-    override fun <T> search(query: T): Flow<Artist>? {
+    override fun <T> search(query: T): Flow<List<Artist>>? {
         return null
     }
 }

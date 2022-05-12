@@ -16,20 +16,23 @@ abstract class MusicDao : IDao<Music, Long>(Music.TABLE_NAME) {
     abstract override fun getItems(): Flow<List<Music>>
 
     @RawQuery(observedEntities = [Music::class])
-    abstract override fun search(query: SupportSQLiteQuery): Flow<Music>
+    abstract override fun search(query: SupportSQLiteQuery): Flow<List<Music>>
 
     @Query("select count(*) from music_table")
     abstract override suspend fun getCount(): Int
 
-    fun searchByName(name: String): Flow<Music> {
+    fun searchByName(name: String): Flow<List<Music>> {
         return search("LOWER(music_name) like ?", arrayOf(name.lowercase()))
     }
 
-    fun searchByArtist(artistId: Long): Flow<Music> {
+    fun searchByArtist(artistId: Long): Flow<List<Music>> {
         return search("music_artist_id = ?", arrayOf(artistId))
     }
 
-    fun searchByAlbum(albumId: Long): Flow<Music> {
+    fun searchByAlbum(albumId: Long): Flow<List<Music>> {
         return search("music_album_id = ?", arrayOf(albumId))
     }
+
+    @Query("select * from music_table where music_is_liked = 1")
+    abstract fun favorites(): Flow<List<Music>>
 }

@@ -6,7 +6,10 @@ import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
 
-object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+class MusicManager(
+    private var musics: List<Music>,
+    private var shuffle: List<Int>? = null
+) : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener {
 
     private val player: MediaPlayer = MediaPlayer().apply {
@@ -21,8 +24,6 @@ object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLi
     }
     private val musicHandler = LiveDataWrapper<MusicHandler>()
     private var currentPosition = LiveDataWrapper(-1)
-    private var musics: List<Music> = emptyList()
-    private var shuffle: List<Int>? = null
 
     override fun onPrepared(player: MediaPlayer) {
         start()
@@ -33,7 +34,8 @@ object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLi
     }
 
     override fun onError(player: MediaPlayer, what: Int, extra: Int): Boolean {
-        TODO("Not yet implemented")
+        return false
+        // TODO Not yet implemented
     }
 
     fun changeShuffleState(hasShuffle: Boolean) {
@@ -47,9 +49,20 @@ object MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLi
     /*
     * by changing the music list (by user touch) we invoke this method
     */
-    fun setupMusicList(list: List<Music>, hasShuffle: Boolean, startPosition: Int) {
-        musics = list
-        changeShuffleState(hasShuffle)
+    fun setupMusicList(list: List<Music>?, hasShuffle: Boolean?, startPosition: Int?) {
+        list?.let {
+            musics = it
+        }
+        hasShuffle?.let {
+            changeShuffleState(it)
+        }
+        if (startPosition == null) {
+            if (list != null) {
+                setupMusic(0)
+            }
+        } else {
+            setupMusic(startPosition)
+        }
     }
 
     private fun getRealPosition(position: Int): Int {

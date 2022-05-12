@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+// useless
 class LiveDataWrapper<T>(t: T? = null) {
     private val liveData by lazy {
         if (t == null) {
@@ -56,3 +57,9 @@ class StateFlowWrapper<T>(t: T) {
         stateFlow.collect(collector)
     }
 }
+
+data class Triple <A, B, C>(
+    val first: A,
+    val second: B,
+    val third: C
+)

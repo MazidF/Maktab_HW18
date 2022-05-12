@@ -32,5 +32,5 @@ abstract class ILocalDataSource<Item, PrimaryKey>(
         return dao.getCount()
     }
 
-    abstract fun <T> search(query: T): Flow<Item>?
+    abstract fun <T> search(query: T): Flow<List<Item>>?
 }

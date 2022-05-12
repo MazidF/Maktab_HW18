@@ -7,6 +7,7 @@ import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.data.model.AlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlin.coroutines.CoroutineContext
 
@@ -38,4 +39,16 @@ class MusicRepository(
         return local.getAlbumsInfo()
     }
 
+    suspend fun getMusicByAlbum(albumId: Long): Flow<List<Music>> {
+        val album = local.getAlbum(albumId) ?: return flow {  }
+        return local.getMusicByAlbum(album)
+    }
+    suspend fun getMusicByArtist(artistId: Long): Flow<List<Music>> {
+        val artist = local.getArtist(artistId) ?: return flow {  }
+        return local.getMusicByArtist(artist)
+    }
+
+    fun getFavoriteMusics(): Flow<List<Music>> {
+        return local.getFavoriteMusics()
+    }
 }

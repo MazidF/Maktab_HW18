@@ -24,9 +24,9 @@ abstract class IDao<Item, PrimaryKey>(
     abstract suspend fun getCount(): Int
 
     @RawQuery
-    protected abstract fun search(query: SupportSQLiteQuery): Flow<Item>
+    protected abstract fun search(query: SupportSQLiteQuery): Flow<List<Item>>
 
-    protected fun search(condition: String, args: Array<Any>? = null): Flow<Item> {
+    protected fun search(condition: String, args: Array<Any>? = null): Flow<List<Item>> {
         val query = "select * from $tableName where $condition"
         return search(SimpleSQLiteQuery(query, args))
     }

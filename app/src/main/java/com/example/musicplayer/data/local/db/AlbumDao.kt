@@ -17,7 +17,7 @@ abstract class AlbumDao : IDao<Album, Long>(Album.TABLE_NAME) {
     abstract override fun getItems(): Flow<List<Album>>
 
     @RawQuery(observedEntities = [Album::class])
-    abstract override fun search(query: SupportSQLiteQuery): Flow<Album>
+    abstract override fun search(query: SupportSQLiteQuery): Flow<List<Album>>
 
     @Query("select count(*) from album_table")
     abstract override suspend fun getCount(): Int

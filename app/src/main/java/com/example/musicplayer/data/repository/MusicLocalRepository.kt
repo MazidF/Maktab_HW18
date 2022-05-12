@@ -125,4 +125,24 @@ class MusicLocalRepository @Inject constructor(
         return albumDataSource.getAlbumsInfo().flowOn(dispatcher)
     }
 
+    fun getMusicByAlbum(album: Album): Flow<List<Music>> {
+        return musicDataSource.search(album) ?: flow {  }
+    }
+
+    fun getMusicByArtist(artist: Artist): Flow<List<Music>> {
+        return musicDataSource.search(artist) ?: flow {  }
+    }
+
+    suspend fun getAlbum(albumId: Long): Album? {
+        return albumDataSource.get(albumId)
+    }
+
+    suspend fun getArtist(artistId: Long): Artist? {
+        return artistDataSource.get(artistId)
+    }
+
+    fun getFavoriteMusics(): Flow<List<Music>> {
+        return musicDataSource.favorites()
+    }
+
 }
