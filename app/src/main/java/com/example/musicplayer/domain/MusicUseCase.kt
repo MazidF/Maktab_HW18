@@ -1,6 +1,7 @@
 package com.example.musicplayer.domain
 
 import android.content.Context
+import androidx.paging.DataSource
 import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
@@ -9,6 +10,7 @@ import com.example.musicplayer.data.repository.MusicRepository
 import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.utils.StateFlowWrapper
 import com.example.musicplayer.utils.loaded
+import com.example.musicplayer.utils.toMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -57,6 +59,17 @@ class MusicUseCase (
     val albumStateFlow = StateFlowWrapper<List<Album>>(emptyList())
     val artistStateFlow = StateFlowWrapper<List<Artist>>(emptyList())
 
+    val albums: HashMap<Long, Album> by lazy {
+        albumStateFlow.value().toMap {
+            it.id
+        }
+    }
+    val artists: HashMap<Long, Artist> by lazy {
+        artistStateFlow.value().toMap {
+            it.id
+        }
+    }
+
     fun getAlbumsInfo(): Flow<List<AlbumInfo>> {
         return repository.getAlbumsInfo()
     }
@@ -80,5 +93,21 @@ class MusicUseCase (
                 }.flowOn(dispatcher)
             }
         }
+    }
+
+    fun getTracksPaging(): DataSource.Factory<Int, Music> {
+        return repository.getTracksPaging()
+    }
+
+    fun getAlbumsPaging(albumId: Long): DataSource.Factory<Int, Music> {
+        return repository.getAlbumsPaging(albumId)
+    }
+
+    fun getArtistsPaging(artistId: Long): DataSource.Factory<Int, Music> {
+        return repository.getArtistsPaging(artistId)
+    }
+
+    fun getFavoritesPaging(): DataSource.Factory<Int, Music> {
+        return repository.getFavoritesPaging()
     }
 }

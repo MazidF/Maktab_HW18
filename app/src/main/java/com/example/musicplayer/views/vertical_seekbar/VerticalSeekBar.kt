@@ -1,4 +1,4 @@
-package com.example.musicplayer.utils.views.vertical_seekbar
+package com.example.musicplayer.views.vertical_seekbar
 
 import android.annotation.SuppressLint
 import android.content.Context

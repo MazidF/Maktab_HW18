@@ -2,14 +2,12 @@ package com.example.musicplayer.ui.fragment.tracks
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import com.example.musicplayer.R
+import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.FragmentTracksBinding
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.utils.createAlphabetSeekbar
-import com.example.musicplayer.utils.repeatLaunchOnState
 import com.example.musicplayer.utils.smoothSnapToPosition
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +29,10 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     }
 
     private fun init() = with(binding) {
-        musicAdapter = MusicTracksItemAdapter()
+        musicAdapter = MusicTracksItemAdapter(
+            artistList = viewModel.artists,
+            onItemClick = this@FragmentTracks::onClick
+        )
         trackList.adapter = musicAdapter
         createAlphabetSeekbar(trackScrollbar) { char ->
             musicAdapter.scrollToFirst({
@@ -44,19 +45,18 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
         }
     }
 
+    private fun onClick(music: Music) {
+
+    }
+
     private fun observer() = with(binding) {
-        repeatLaunchOnState(Lifecycle.State.STARTED) {
-            viewModel.musicsStateFlow.collect {
-                musicAdapter.submitList(it)
-            }
+        viewModel.musicList.observe(viewLifecycleOwner) {
+            musicAdapter.submitList(it)
         }
     }
 
     override fun handleOnBackPressed(): Boolean {
-        if (musicAdapter.isSelecting()) {
-            musicAdapter.removeSelection()
-            return true
-        }
+        // TODO: cancel selection if needed
         return false
     }
 

@@ -46,7 +46,7 @@ class FragmentAlbums : FragmentWithBackPress(R.layout.fragment_albums) {
 
     private fun onItemClick(item: AlbumInfo) {
         navController.navigate(
-            FragmentMainDirections.actionFragmentMainToFragmentAlbumList(item)
+            FragmentMainDirections.actionFragmentMainToFragmentAlbumList(item.album)
         )
     }
 

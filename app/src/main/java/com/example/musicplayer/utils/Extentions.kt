@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -39,7 +42,7 @@ fun Int.timeFormatter(): String {
     return if (hour == 0) {
         "$min:${stringFormatter(sec)}"
     } else {
-        "$hour:${stringFormatter(min)}"
+        "$hour:${stringFormatter(min)}:${stringFormatter(sec)}"
     }
 }
 
@@ -65,7 +68,7 @@ infix fun <K, V> List<K>.to(other: List<V>): Array<Pair<K, V>> {
     }
 }
 
-fun <T, K> List<T>.toMap(key: T.() -> K): HashMap<K, T> {
+fun <T, K> List<T>.toMap(key: (T) -> K): HashMap<K, T> {
     val keys = this.map(key)
     return hashMapOf(*keys to this)
 }
@@ -133,7 +136,7 @@ fun Fragment.repeatLaunchOnState(
     state: Lifecycle.State,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    lifecycleScope.launch {
+    viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(state, block)
     }
 }
@@ -277,4 +280,13 @@ fun Context.vibrate(duration: Long = 500): Boolean {
         v.vibrate(duration)
     }
     return true
+}
+
+suspend fun pathToBitmap(path: String): Bitmap? {
+    val mmr = MediaMetadataRetriever()
+    mmr.setDataSource(path)
+    val data = mmr.embeddedPicture
+    return data?.let {
+        BitmapFactory.decodeByteArray(it, 0, it.size)
+    }
 }

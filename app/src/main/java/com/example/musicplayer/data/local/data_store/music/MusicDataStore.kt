@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.example.musicplayer.data.local.data_store.music.MusicPreferenceInfo
 import kotlin.coroutines.CoroutineContext
 
 private const val DATA_STORE_NAME = "music_datastore"
@@ -55,7 +56,7 @@ class MusicDataStore @Inject constructor(
     }.flowOn(dispatcher)
 
     // id is for albums or artists list.
-    suspend fun updateMusicList(musicLists: MusicLists, id: Int?) {
+    suspend fun updateMusicList(musicLists: MusicLists, id: Long?) {
         datastore.edit {
             it[MusicPreferencesKey.CURRENT_MUSIC_LIST_KEY]  = musicLists::class.java.simpleName
             when(musicLists) {
@@ -84,8 +85,8 @@ class MusicDataStore @Inject constructor(
     private object MusicPreferencesKey {
         val CURRENT_MUSIC_LIST_KEY = stringPreferencesKey("currentMusicListKey")
         val CURRENT_MUSIC_INDEX_KEY = intPreferencesKey("currentMusicIndexKey")
-        val CURRENT_MUSIC_ALBUM_ID_KEY = intPreferencesKey("currentMusicAlbumIdKey")
-        val CURRENT_MUSIC_ARTIST_ID_KEY = intPreferencesKey("currentMusicArtistIdKey")
+        val CURRENT_MUSIC_ALBUM_ID_KEY = longPreferencesKey("currentMusicAlbumIdKey")
+        val CURRENT_MUSIC_ARTIST_ID_KEY = longPreferencesKey("currentMusicArtistIdKey")
         val CURRENT_MUSIC_HAS_SHUFFLE_KEY = booleanPreferencesKey("currentMusicHasShuffleKey")
     }
 }

@@ -1,4 +1,4 @@
-package com.example.musicplayer.utils.views.tab_layout
+package com.example.musicplayer.views.tab_layout
 
 import android.content.Context
 import android.util.AttributeSet

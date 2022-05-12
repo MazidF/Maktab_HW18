@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.musicplayer.utils.views.vertical_seekbar.VerticalSeekBar
+    <com.example.musicplayer.views.vertical_seekbar.VerticalSeekBar
         android:id="@+id/alphabet_seekbar"
         android:layout_width="20dp"
         android:layout_height="match_parent"

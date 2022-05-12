@@ -43,8 +43,8 @@ class MusicLocalRepository @Inject constructor(
 
         if (cursor.moveToFirst()) {
 
-            val albums = albumDataSource.getItems().first().toMap { name }
-            val artists = artistDataSource.getItems().first().toMap { name }
+            val albums = albumDataSource.getItems().first().toMap { it.name }
+            val artists = artistDataSource.getItems().first().toMap { it.name }
 
             val setArtist = hashSetOf<Artist>()
             val setAlbum = hashSetOf<Album>()

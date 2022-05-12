@@ -5,4 +5,8 @@
         <attr name="items" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="MusicItemTracksView">
+
+    </declare-styleable>
+
 </resources>

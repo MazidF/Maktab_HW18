@@ -1,6 +1,7 @@
 package com.example.musicplayer.di
 
 import android.content.Context
+import com.example.musicplayer.data.repository.MusicLocalPagingRepository
 import com.example.musicplayer.data.repository.MusicLocalRepository
 import com.example.musicplayer.data.repository.MusicRemoteRepository
 import com.example.musicplayer.data.repository.MusicRepository
@@ -30,11 +31,13 @@ class AppModule {
     @Singleton
     fun provideMusicRepository(
         local: MusicLocalRepository,
+        localPaging: MusicLocalPagingRepository,
         remote: MusicRemoteRepository,
     ): MusicRepository {
         return MusicRepository(
             local = local,
-            remote = remote
+            localPaging = localPaging,
+            remote = remote,
         )
     }
 
@@ -85,13 +88,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideMusicManager(
-
-    ): MusicManager {
-        return MusicManager(
-            musics = ,
-            shuffle = null
-        )
+    fun provideMusicManager(): MusicManager {
+        return MusicManager()
     }
 
 }

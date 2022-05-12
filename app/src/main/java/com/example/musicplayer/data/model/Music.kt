@@ -1,9 +1,13 @@
 package com.example.musicplayer.data.model
 
+import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.musicplayer.R
+import com.example.musicplayer.utils.Constants
+import com.example.musicplayer.utils.pathToBitmap
 
 @Entity(
     tableName = Music.TABLE_NAME,
@@ -37,6 +41,10 @@ data class Music(
                 id = -1
             )
         }
+    }
+
+    suspend fun getAlbumImage(): Any {
+        return pathToBitmap(data) ?: R.drawable.music_player_icon
     }
 }
 

@@ -3,10 +3,7 @@ package com.example.musicplayer.utils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 
 // useless
 class LiveDataWrapper<T>(t: T? = null) {
@@ -56,6 +53,8 @@ class StateFlowWrapper<T>(t: T) {
     suspend fun collect(collector: FlowCollector<T>) {
         stateFlow.collect(collector)
     }
+
+    suspend fun first() = stateFlow.first()
 }
 
 data class Triple <A, B, C>(

@@ -1,6 +1,7 @@
 package com.example.musicplayer.data.repository
 
 import android.content.Context
+import androidx.paging.DataSource
 import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
@@ -15,6 +16,7 @@ import kotlin.coroutines.CoroutineContext
 // TODO: add dispatcher
 class MusicRepository(
     private val local: MusicLocalRepository,
+    private val localPaging: MusicLocalPagingRepository,
     private val remote: MusicRemoteRepository,
     private val dispatcher: CoroutineContext = Dispatchers.IO,
 ) {
@@ -50,5 +52,21 @@ class MusicRepository(
 
     fun getFavoriteMusics(): Flow<List<Music>> {
         return local.getFavoriteMusics()
+    }
+
+    fun getTracksPaging(): DataSource.Factory<Int, Music> {
+        return localPaging.getTracks()
+    }
+
+    fun getAlbumsPaging(albumId: Long): DataSource.Factory<Int, Music> {
+        return localPaging.getAlbums(albumId)
+    }
+
+    fun getArtistsPaging(artistId: Long): DataSource.Factory<Int, Music> {
+        return localPaging.getArtists(artistId)
+    }
+
+    fun getFavoritesPaging(): DataSource.Factory<Int, Music> {
+        return localPaging.getFavorites()
     }
 }

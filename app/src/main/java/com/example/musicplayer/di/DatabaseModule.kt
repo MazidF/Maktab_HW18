@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.musicplayer.data.local.db.AlbumDao
-import com.example.musicplayer.data.local.db.ArtistDao
-import com.example.musicplayer.data.local.db.MusicDao
-import com.example.musicplayer.data.local.db.MusicDatabase
+import com.example.musicplayer.data.local.db.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,6 +50,14 @@ class DatabaseModule {
         database: MusicDatabase
     ): ArtistDao {
         return database.artistDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePagingDao(
+        database: MusicDatabase
+    ): PagingDao {
+        return database.pagingDao()
     }
 
 }

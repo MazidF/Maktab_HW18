@@ -6,12 +6,11 @@ import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
 
-class MusicManager(
-    private var musics: List<Music>,
-    private var shuffle: List<Int>? = null
-) : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener {
 
+    private var musics: List<Music> = listOf()
+    private var shuffle: List<Int>? = null
     private val player: MediaPlayer = MediaPlayer().apply {
         setOnCompletionListener(this@MusicManager)
         setOnPreparedListener(this@MusicManager)
