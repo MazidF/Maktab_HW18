@@ -29,4 +29,6 @@ abstract class MusicItemView : LinearLayout {
         super.setActivated(activated)
         changeSelectionState(activated)
     }
+
+    abstract fun selected(isSelected: Boolean)
 }

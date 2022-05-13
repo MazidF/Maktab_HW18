@@ -9,6 +9,7 @@ import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
 import com.example.musicplayer.utils.Constants
+import com.example.musicplayer.utils.set
 import com.example.musicplayer.utils.setup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,14 +28,16 @@ class MusicItemTracksView  : MusicItemView {
     private lateinit var binding: MusicItemTracksBinding
 
     override fun onViewCreated(view: View) {
-        binding = MusicItemTracksBinding.bind(view).apply {
-            musicItemSelect.setup {}
-        }
+        binding = MusicItemTracksBinding.bind(view)
     }
 
     override fun changeSelectionState(isActive: Boolean) = with(binding) {
         musicItemSelect.isVisible = isActive
         musicItemMore.isVisible = isActive.not()
+    }
+
+    override fun selected(isSelected: Boolean) = with(binding) {
+        musicItemSelect.set(isSelected)
     }
 
     suspend fun setMusic(music: Music, artistName: String) = with(binding) {

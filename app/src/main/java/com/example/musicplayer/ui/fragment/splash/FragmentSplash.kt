@@ -44,7 +44,6 @@ class FragmentSplash : Fragment(R.layout.fragment_splash) {
     private var hasBeenLoaded = MutableLiveData<Boolean>()
 
     private val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-    private var hasPermission: Boolean = false
 
     @Inject
     lateinit var useCase: MusicUseCase

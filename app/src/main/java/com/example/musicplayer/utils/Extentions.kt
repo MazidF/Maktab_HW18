@@ -183,7 +183,7 @@ fun Context.isLandScape(): Boolean {
 
 fun RadioButton.setup(block: RadioButton.() -> Unit = {}) {
     set(false)
-    setOnClickListener {
+    this.setOnClickListener {
         if (isSelected) {
             isSelected = false
             isChecked = false
@@ -224,7 +224,7 @@ fun getAlphabet(context: Context): List<Char> {
     }
 }
 
-fun createAlphabetSeekbar(
+fun createAlphabetScrollbar(
     binding: AlphabetSeekbarBinding,
     cb: (Char) -> Unit
 ) {

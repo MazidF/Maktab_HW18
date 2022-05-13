@@ -28,6 +28,10 @@ class MusicAlbumsItemAdapter(
         override fun bind(music: Music) = with(view) {
 
         }
+
+        override fun select(isSelected: Boolean) {
+            view.selected(isSelected)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {

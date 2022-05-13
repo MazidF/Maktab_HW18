@@ -7,6 +7,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.data.model.Music
+import com.example.musicplayer.utils.observeOnce
 import com.example.musicplayer.views.music_items.MusicItemView
 
 abstract class MusicItemAdapter(
@@ -16,6 +17,15 @@ abstract class MusicItemAdapter(
 
     fun setTracker(tracker: SelectionTracker<Long>) {
         this.tracker = tracker
+        tracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+                val hasSelection = tracker.hasSelection()
+                if (hasSelection != isSelecting.value) {
+                    isSelecting.value = hasSelection
+                }
+            }
+        })
     }
 
     companion object {
@@ -38,11 +48,6 @@ abstract class MusicItemAdapter(
 
     init {
         setHasStableIds(true)
-        tracker?.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                super.onSelectionChanged()
-            }
-        })
     }
 
     final override fun setHasStableIds(hasStableIds: Boolean) {
@@ -51,7 +56,7 @@ abstract class MusicItemAdapter(
 
     override fun getItemId(position: Int) = position.toLong()
 
-    private val isSelecting by lazy {
+    val isSelecting by lazy {
         MutableLiveData(false)
     }
 
@@ -65,15 +70,20 @@ abstract class MusicItemAdapter(
                     music?.let(onItemClick)
                 }
             }
+            isSelecting.observeForever {
+                view.isActivated = (it == true)
+            }
         }
 
         fun innerBind(music: Music, isSelected: Boolean) {
             this.music = music
-            view.isActivated = isSelected
+            select(isSelected)
             bind(music)
         }
 
         abstract fun bind(music: Music)
+
+        abstract fun select(isSelected: Boolean)
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {
             return object : ItemDetailsLookup.ItemDetails<Long>() {
@@ -85,6 +95,13 @@ abstract class MusicItemAdapter(
 
     fun selectAll(selected: Boolean) {
         tracker?.setItemsSelected(0L..(currentList?.size ?: 0), selected)
+    }
+
+    fun clearSelection(): Boolean {
+        tracker?.let {
+            return it.clearSelection()
+        }
+        return false
     }
 
     override fun onBindViewHolder(holder: MusicHolder, position: Int) {

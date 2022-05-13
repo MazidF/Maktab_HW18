@@ -8,6 +8,7 @@ import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemAlbumsBinding
 import com.example.musicplayer.utils.secondToTimeFormatter
+import com.example.musicplayer.utils.set
 import com.example.musicplayer.utils.setup
 
 class MusicItemAlbumsView  : MusicItemView {
@@ -32,6 +33,10 @@ class MusicItemAlbumsView  : MusicItemView {
     override fun changeSelectionState(isActive: Boolean) = with(binding) {
         musicItemSelect.isVisible = isActive
         musicItemMore.isVisible = isActive.not()
+    }
+
+    override fun selected(isSelected: Boolean) = with(binding) {
+        musicItemSelect.set(isSelected)
     }
 
     fun setMusic(music: Music) = with(binding) {

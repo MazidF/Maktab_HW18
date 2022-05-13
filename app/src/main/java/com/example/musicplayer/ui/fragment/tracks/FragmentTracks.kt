@@ -2,14 +2,14 @@ package com.example.musicplayer.ui.fragment.tracks
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.selection.SelectionTracker
 import com.example.musicplayer.R
-import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.FragmentTracksBinding
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
-import com.example.musicplayer.utils.createAlphabetSeekbar
+import com.example.musicplayer.ui.selection.createSelectionTracker
+import com.example.musicplayer.utils.createAlphabetScrollbar
 import com.example.musicplayer.utils.smoothSnapToPosition
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,10 +34,23 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
         musicAdapter = MusicTracksItemAdapter(
             artistList = viewModel.artists,
             onItemClick = this@FragmentTracks::onClick
-        )
-        trackList.adapter = musicAdapter
-        // TODO: add selection tracker
-        createAlphabetSeekbar(trackScrollbar) { char ->
+        ).also {
+            it.isSelecting.observe(viewLifecycleOwner) { bool ->
+                Toast.makeText(requireContext(), bool.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
+        trackList.apply {
+            adapter = musicAdapter
+            musicAdapter.setTracker(createSelectionTracker(
+                id = SELECTION_ID,
+                recyclerView = this
+            ))
+        }
+        scrollbarInit()
+    }
+
+    private fun scrollbarInit() = with(binding) {
+        createAlphabetScrollbar(trackScrollbar) { char ->
             musicAdapter.scrollToFirst({
                 it.name.uppercase().first() == char
             }) {
@@ -59,12 +72,19 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     }
 
     override fun handleOnBackPressed(): Boolean {
-        // TODO: cancel selection if needed
-        return false
+/*        if (musicAdapter.clearSelection()) {
+            return true
+        }
+        return false*/
+        return musicAdapter.clearSelection()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val SELECTION_ID = "fragment_tracks_selection_id"
     }
 }

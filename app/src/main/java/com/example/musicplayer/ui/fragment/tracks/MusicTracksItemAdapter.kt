@@ -1,6 +1,7 @@
 package com.example.musicplayer.ui.fragment.tracks
 
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.selection.SelectionTracker
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
@@ -25,10 +26,10 @@ class MusicTracksItemAdapter(
         init {
             with(view) {
                 setOnMoreOptionClickedListener {
-
+                    println()
                 }
                 setOnSelectionChangedListener { isSelected ->
-
+                    Toast.makeText(view.context, isSelected.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -37,6 +38,10 @@ class MusicTracksItemAdapter(
             scope.launch {
                 setMusic(music, artistList[music.artistId]?.name ?: "")
             }
+        }
+
+        override fun select(isSelected: Boolean) {
+            view.selected(isSelected)
         }
     }
 

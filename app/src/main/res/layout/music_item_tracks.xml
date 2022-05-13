@@ -15,7 +15,6 @@
     android:layout_marginBottom="4dp">
 
     <RadioButton
-        android:visibility="gone"
         android:id="@+id/music_item_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -57,6 +56,9 @@
     </LinearLayout>
 
     <ImageView
+        android:foreground="?android:selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:id="@+id/music_item_more"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
