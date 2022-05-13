@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -25,12 +27,19 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import com.example.musicplayer.data.local.data_store.main.MainDataStore
+import com.example.musicplayer.data.model.Album
+import com.example.musicplayer.data.model.Artist
+import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.AlphabetSeekbarBinding
 import com.example.musicplayer.ui.fragment.AlphabetAdapter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
+import kotlin.collections.HashMap
 
 
 typealias MediaInfo = MediaStore.Audio.Media
@@ -283,10 +292,109 @@ fun Context.vibrate(duration: Long = 500): Boolean {
 }
 
 suspend fun pathToBitmap(path: String): Bitmap? {
-    val mmr = MediaMetadataRetriever()
-    mmr.setDataSource(path)
-    val data = mmr.embeddedPicture
-    return data?.let {
-        BitmapFactory.decodeByteArray(it, 0, it.size)
+    return try {
+        val mmr = MediaMetadataRetriever()
+        mmr.setDataSource(path)
+        val data = mmr.embeddedPicture
+        data?.let {
+            BitmapFactory.decodeByteArray(it, 0, it.size)
+        }
+    } catch (e: Exception) {
+        null
     }
 }
+
+private fun loadMusics(
+    context: Context,
+    uri: Uri,
+    cb: (HashSet<Album>, HashSet<Artist>) -> Unit,
+    mainDatastore: MainDataStore
+): Flow<Music> = flow {
+    val projection = arrayOf(
+        MediaInfo.ALBUM,
+        MediaInfo.ALBUM_ID,
+        MediaInfo.ARTIST,
+        MediaInfo.ARTIST_ID,
+        MediaInfo.DATA,
+        MediaInfo.DISPLAY_NAME,
+        MediaInfo.DURATION
+    ) // or null to be easier
+    val selection = MediaInfo.IS_MUSIC + " != 0"
+    val sortOrder = MediaInfo.DISPLAY_NAME + " ASC"
+    val cursor: Cursor = context.contentResolver
+        .query(uri, projection, selection, null, sortOrder) ?: return@flow
+
+    if (cursor.moveToFirst()) {
+
+        val albums = hashMapOf<String, Album>() //albumDataSource.getItems().first().toMap { it.name }
+        val artists = hashMapOf<String, Artist>() //artistDataSource.getItems().first().toMap { it.name }
+
+        val setArtist = hashSetOf<Artist>()
+        val setAlbum = hashSetOf<Album>()
+
+        val nameColumn = cursor.getColumnIndex(MediaInfo.DISPLAY_NAME)
+        val dataColumn = cursor.getColumnIndex(MediaInfo.DATA)
+        val albumColumn = cursor.getColumnIndex(MediaInfo.ALBUM)
+        val artistColumn = cursor.getColumnIndex(MediaInfo.ARTIST)
+        val albumIdColumn = cursor.getColumnIndex(MediaInfo.ALBUM_ID)
+        val artistIdColumn = cursor.getColumnIndex(MediaInfo.ARTIST_ID)
+        val durationColumn = cursor.getColumnIndex(MediaInfo.DURATION)
+
+        var songName: String
+        var path: String
+        var albumName: String
+        var artistName: String
+        var albumId: Long
+        var artistId: Long
+        var time: Int
+        do {
+            songName = cursor.getString(nameColumn)
+
+            path = cursor.getString(dataColumn)
+
+            albumName = cursor.getString(albumColumn)
+
+            artistName = cursor.getString(artistColumn)
+
+            albumId = albums[albumName]?.id ?: cursor.getLong(albumIdColumn).also {
+                setAlbum.add(Album(it, albumName))
+            }
+
+            artistId = artists[artistName]?.id ?: cursor.getLong(artistIdColumn).also {
+                setArtist.add(Artist(it, artistName))
+            }
+
+            time = cursor.getInt(durationColumn)
+
+            emit(
+                Music(
+                    name = songName,
+                    time = time,
+                    data = path,
+                    artistId = artistId,
+                    albumId = albumId
+                )/*.also {
+                        musicDataSource.insertItems(it)
+                    }*/
+            )
+
+        } while (cursor.moveToNext())
+
+/*            albumDataSource.insertItems(*setAlbum.toTypedArray())
+            artistDataSource.insertItems(*setArtist.toTypedArray())*/
+        cb(setAlbum, setArtist)
+    }
+
+    mainDatastore.updateHasBeenLoaded(true)
+    cursor.close()
+}.flowOn(Dispatchers.IO)
+
+fun loadMusics(
+    context: Context,
+    mainDatastore: MainDataStore,
+    cb: (HashSet<Album>, HashSet<Artist>) -> Unit,
+): Flow<List<Music>> {
+    val uri = MediaInfo.EXTERNAL_CONTENT_URI
+    return loadMusics(context, uri, cb, mainDatastore).collectAsList(20)
+}
+

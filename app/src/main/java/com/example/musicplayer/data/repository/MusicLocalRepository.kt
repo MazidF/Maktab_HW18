@@ -1,112 +1,50 @@
 package com.example.musicplayer.data.repository
 
-import android.content.Context
-import android.database.Cursor
-import android.net.Uri
 import com.example.musicplayer.data.local.AlbumLocalDataSource
 import com.example.musicplayer.data.local.ArtistLocalDataSource
 import com.example.musicplayer.data.local.MusicLocalDataSource
 import com.example.musicplayer.data.model.Album
+import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.di.annotations.DispatcherIO
-import com.example.musicplayer.data.model.AlbumInfo
-import com.example.musicplayer.utils.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
 
-// TODO: add dispatcher
+@Singleton
 class MusicLocalRepository @Inject constructor(
     private val musicDataSource: MusicLocalDataSource,
     private val albumDataSource: AlbumLocalDataSource,
     private val artistDataSource: ArtistLocalDataSource,
     @DispatcherIO private val dispatcher: CoroutineContext,
 ) {
+    private val scope = CoroutineScope(dispatcher)
 
-    private fun loadMusics(context: Context, uri: Uri): Flow<Music> = flow {
-        val projection = arrayOf(
-            MediaInfo.ALBUM,
-            MediaInfo.ALBUM_ID,
-            MediaInfo.ARTIST,
-            MediaInfo.ARTIST_ID,
-            MediaInfo.DATA,
-            MediaInfo.DISPLAY_NAME,
-            MediaInfo.DURATION
-        ) // or null to be easier
-        val selection = MediaInfo.IS_MUSIC + " != 0"
-        val sortOrder = MediaInfo.DISPLAY_NAME + " ASC"
-        val cursor: Cursor = context.contentResolver
-            .query(uri, projection, selection, null, sortOrder, ) ?: return@flow
-
-
-        if (cursor.moveToFirst()) {
-
-            val albums = albumDataSource.getItems().first().toMap { it.name }
-            val artists = artistDataSource.getItems().first().toMap { it.name }
-
-            val setArtist = hashSetOf<Artist>()
-            val setAlbum = hashSetOf<Album>()
-
-            val nameColumn = cursor.getColumnIndex(MediaInfo.DISPLAY_NAME)
-            val dataColumn = cursor.getColumnIndex(MediaInfo.DATA)
-            val albumColumn = cursor.getColumnIndex(MediaInfo.ALBUM)
-            val artistColumn = cursor.getColumnIndex(MediaInfo.ARTIST)
-            val albumIdColumn = cursor.getColumnIndex(MediaInfo.ALBUM_ID)
-            val artistIdColumn = cursor.getColumnIndex(MediaInfo.ARTIST_ID)
-            val durationColumn = cursor.getColumnIndex(MediaInfo.DURATION)
-
-            var songName: String
-            var path: String
-            var albumName: String
-            var artistName: String
-            var albumId: Long
-            var artistId: Long
-            var time: Int
-            do {
-                songName = cursor.getString(nameColumn)
-
-                path = cursor.getString(dataColumn)
-
-                albumName = cursor.getString(albumColumn)
-
-                artistName = cursor.getString(artistColumn)
-
-                albumId = albums[albumName]?.id ?: cursor.getLong(albumIdColumn).also {
-                    setAlbum.add(Album(it, albumName))
-                }
-
-                artistId = artists[artistName]?.id ?: cursor.getLong(artistIdColumn).also {
-                    setArtist.add(Artist(it, artistName))
-                }
-
-                time = cursor.getInt(durationColumn)
-
-                emit(
-                    Music(
-                        name = songName,
-                        time = time,
-                        data = path,
-                        artistId = artistId,
-                        albumId = albumId
-                    ).also {
-                        musicDataSource.insertItems(it)
-                    }
-                )
-
-            } while (cursor.moveToNext())
-
-            albumDataSource.insertItems(*setAlbum.toTypedArray())
-            artistDataSource.insertItems(*setArtist.toTypedArray())
+    fun loadMusics(flow: Flow<List<Music>>) {
+        scope.launch {
+            flow.collect {
+                musicDataSource.insertItems(*it.toTypedArray())
+            }
         }
+    }
 
-        cursor.close()
-    }.flowOn(dispatcher)
+    fun loadAlbums(artistSet: HashSet<Album>) {
+        scope.launch {
+            albumDataSource.insertItems(*artistSet.toTypedArray())
+        }
+    }
 
-    fun loadMusics(context: Context): Flow<List<Music>> {
-        val uri = MediaInfo.EXTERNAL_CONTENT_URI
-        return loadMusics(context, uri).collectAsList(30)
+    fun loadArtists(artistSet: HashSet<Artist>) {
+        scope.launch {
+            artistDataSource.insertItems(*artistSet.toTypedArray())
+        }
     }
 
     fun getAllMusics(): Flow<List<Music>> {
@@ -126,11 +64,11 @@ class MusicLocalRepository @Inject constructor(
     }
 
     fun getMusicByAlbum(album: Album): Flow<List<Music>> {
-        return musicDataSource.search(album) ?: flow {  }
+        return musicDataSource.search(album) ?: flow { }
     }
 
     fun getMusicByArtist(artist: Artist): Flow<List<Music>> {
-        return musicDataSource.search(artist) ?: flow {  }
+        return musicDataSource.search(artist) ?: flow { }
     }
 
     suspend fun getAlbum(albumId: Long): Album? {

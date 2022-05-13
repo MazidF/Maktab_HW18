@@ -8,14 +8,12 @@ import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.data.repository.MusicRepository
 import com.example.musicplayer.data.model.AlbumInfo
-import com.example.musicplayer.utils.StateFlowWrapper
 import com.example.musicplayer.utils.loaded
 import com.example.musicplayer.utils.toMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -25,9 +23,18 @@ class MusicUseCase (
     context: Context? = null
 ) {
     private var hasBeenLoaded: Boolean = context == null
+    private val scope = CoroutineScope(dispatcher)
+
+    val musicStateFlow = MutableStateFlow<List<Music>>(emptyList())
+    val albumStateFlow = MutableStateFlow<List<Album>>(emptyList())
+    val artistStateFlow = MutableStateFlow<List<Artist>>(emptyList())
+
+    lateinit var albums: HashMap<Long, Album>
+    lateinit var artists: HashMap<Long, Artist>
+    // TODO: make this maps in a flow
 
     init {
-        CoroutineScope(dispatcher).launch {
+        scope.launch {
             launch {
                 repository.getAllMusics().collect {
                     if (hasBeenLoaded) {
@@ -45,28 +52,22 @@ class MusicUseCase (
                     artistStateFlow.emit(it)
                 }
             }
-            context?.let {
-                repository.loadMusics(it).collect { list ->
-                    musicStateFlow.emit(musicStateFlow.value() + list)
+            launch {
+                val temp = artistStateFlow.first {
+                    it.isNotEmpty()
+                }.toMap {
+                    it.id
                 }
-                hasBeenLoaded = true
-                it.loaded()
+                artists = temp
             }
-        }
-    }
-
-    val musicStateFlow = StateFlowWrapper<List<Music>>(emptyList())
-    val albumStateFlow = StateFlowWrapper<List<Album>>(emptyList())
-    val artistStateFlow = StateFlowWrapper<List<Artist>>(emptyList())
-
-    val albums: HashMap<Long, Album> by lazy {
-        albumStateFlow.value().toMap {
-            it.id
-        }
-    }
-    val artists: HashMap<Long, Artist> by lazy {
-        artistStateFlow.value().toMap {
-            it.id
+            launch {
+                val temp = albumStateFlow.first {
+                    it.isNotEmpty()
+                }.toMap {
+                    it.id
+                }
+                albums = temp
+            }
         }
     }
 

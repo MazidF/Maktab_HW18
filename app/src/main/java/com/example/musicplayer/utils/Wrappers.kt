@@ -38,7 +38,7 @@ class LiveDataWrapper<T>(t: T? = null) {
     }
 }
 
-// TODO: change this useless class
+// useless
 class StateFlowWrapper<T>(t: T) {
     private val stateFlow by lazy {
         MutableStateFlow(t)

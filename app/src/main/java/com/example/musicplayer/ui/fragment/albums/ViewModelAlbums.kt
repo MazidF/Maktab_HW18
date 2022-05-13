@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicplayer.domain.MusicUseCase
 import com.example.musicplayer.data.model.AlbumInfo
-import com.example.musicplayer.utils.StateFlowWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class ViewModelAlbums @Inject constructor(
     private val useCase: MusicUseCase
 ): ViewModel() {
 
-    val albumsInfoStateFlow = StateFlowWrapper<List<AlbumInfo>>(emptyList())
+    val albumsInfoStateFlow = MutableStateFlow<List<AlbumInfo>>(emptyList())
 
     init {
         getAlbumsInfo()

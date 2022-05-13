@@ -45,8 +45,10 @@ class MusicTracksItemAdapter(
     }
 
     fun scrollToFirst(filter: (Music) -> Boolean, block: (Int) -> Unit) {
-        val index = currentList?.indexOfFirst {
-            filter(it)
+        val index = currentList?.indexOfFirst { music ->
+            music?.let {
+                filter(it)
+            } ?: false
         } ?: return
         block(index)
     }

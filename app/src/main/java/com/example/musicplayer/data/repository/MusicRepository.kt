@@ -21,10 +21,6 @@ class MusicRepository(
     private val dispatcher: CoroutineContext = Dispatchers.IO,
 ) {
 
-    fun loadMusics(context: Context): Flow<List<Music>> {
-        return local.loadMusics(context)
-    }
-
     fun getAllMusics(): Flow<List<Music>> {
         return local.getAllMusics().flowOn(dispatcher)
     }
@@ -45,6 +41,7 @@ class MusicRepository(
         val album = local.getAlbum(albumId) ?: return flow {  }
         return local.getMusicByAlbum(album)
     }
+
     suspend fun getMusicByArtist(artistId: Long): Flow<List<Music>> {
         val artist = local.getArtist(artistId) ?: return flow {  }
         return local.getMusicByArtist(artist)

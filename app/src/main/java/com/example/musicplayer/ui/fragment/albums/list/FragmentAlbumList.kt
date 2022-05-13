@@ -11,7 +11,9 @@ import com.example.musicplayer.databinding.FragmentAlbumListBinding
 import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.ui.fragment.albums.ViewModelAlbums
 import com.example.musicplayer.utils.Mapper.toSelectableMusic
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FragmentAlbumList : FragmentWithOnBackListener(R.layout.fragment_album_list) {
     private val args: FragmentAlbumListArgs by navArgs()
     private lateinit var albumAdapter: MusicAlbumsItemAdapter

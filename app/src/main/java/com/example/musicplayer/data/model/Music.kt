@@ -1,12 +1,11 @@
 package com.example.musicplayer.data.model
 
-import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.musicplayer.R
-import com.example.musicplayer.utils.Constants
+import com.example.musicplayer.utils.Constants.musicBitmaps
 import com.example.musicplayer.utils.pathToBitmap
 
 @Entity(
@@ -27,7 +26,8 @@ data class Music(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "music_id") val id: Long = 0,
 ) {
-    @ColumnInfo(name = "music_is_liked") var isLiked: Boolean = false
+    @ColumnInfo(name = "music_is_liked")
+    var isLiked: Boolean = false
 
     companion object {
         const val TABLE_NAME = "music_table"
@@ -44,7 +44,13 @@ data class Music(
     }
 
     suspend fun getAlbumImage(): Any {
-        return pathToBitmap(data) ?: R.drawable.music_player_icon
+        return if (musicBitmaps.containsKey(id)) {
+            musicBitmaps[id]
+        } else {
+            pathToBitmap(data).apply {
+                musicBitmaps[id] = this
+            }
+        } ?: R.drawable.music_player_icon
     }
 }
 

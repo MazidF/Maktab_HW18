@@ -14,12 +14,12 @@ class MusicItemAlbumsView  : MusicItemView {
 
     constructor(
         context: Context
-    ) : super(context, R.layout.music_item_tracks)
+    ) : super(context, R.layout.music_item_albums)
 
     constructor(
         context: Context,
         attr: AttributeSet
-    ) : super(context, attr, R.layout.music_item_tracks)
+    ) : super(context, attr, R.layout.music_item_albums)
 
     private lateinit var binding: MusicItemAlbumsBinding
 

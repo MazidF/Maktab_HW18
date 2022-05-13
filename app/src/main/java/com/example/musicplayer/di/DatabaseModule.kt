@@ -4,7 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.example.musicplayer.data.local.db.*
+import com.example.musicplayer.workmanager.LoadMusicWorker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

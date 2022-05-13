@@ -3,7 +3,9 @@ package com.example.musicplayer.ui.fragment.tracks
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.selection.SelectionTracker
 import com.example.musicplayer.R
+import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.FragmentTracksBinding
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
@@ -34,6 +36,7 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
             onItemClick = this@FragmentTracks::onClick
         )
         trackList.adapter = musicAdapter
+        // TODO: add selection tracker
         createAlphabetSeekbar(trackScrollbar) { char ->
             musicAdapter.scrollToFirst({
                 it.name.uppercase().first() == char
