@@ -15,4 +15,10 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"/>
 
+    <com.example.musicplayer.views.music_controller.ControllerView
+        android:id="@+id/music_controller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

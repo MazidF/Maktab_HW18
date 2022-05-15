@@ -33,7 +33,7 @@ data class Music(
         const val TABLE_NAME = "music_table"
         val empty by lazy {
             Music(
-                name = "",
+                name = "Select a Music.",
                 time = 0,
                 data = "",
                 albumId = -1,

@@ -1,17 +1,16 @@
 package com.example.musicplayer.ui.fragment.albums.list
 
 import android.view.ViewGroup
-import com.example.musicplayer.data.model.Album
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
-import com.example.musicplayer.views.music_items.MusicItemTracksView
+import com.example.musicplayer.views.music_items.MusicItemAlbumsView
 
 class MusicAlbumsItemAdapter(
     onItemClick: (Music) -> Unit,
 ) : MusicItemAdapter(onItemClick) {
 
     private inner class MusicAlbumHolder(
-        private val view: MusicItemTracksView
+        private val view: MusicItemAlbumsView
     ) : MusicHolder(view) {
 
         init {
@@ -26,7 +25,7 @@ class MusicAlbumsItemAdapter(
         }
 
         override fun bind(music: Music) = with(view) {
-
+            view.setMusic(music)
         }
 
         override fun select(isSelected: Boolean) {
@@ -35,6 +34,6 @@ class MusicAlbumsItemAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {
-        return MusicAlbumHolder(MusicItemTracksView(parent.context))
+        return MusicAlbumHolder(MusicItemAlbumsView(parent.context))
     }
 }

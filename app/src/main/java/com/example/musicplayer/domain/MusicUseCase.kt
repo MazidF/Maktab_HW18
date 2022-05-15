@@ -8,11 +8,9 @@ import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.data.repository.MusicRepository
 import com.example.musicplayer.data.model.AlbumInfo
-import com.example.musicplayer.utils.loaded
 import com.example.musicplayer.utils.toMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext

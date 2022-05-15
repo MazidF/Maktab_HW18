@@ -2,24 +2,55 @@ package com.example.musicplayer.ui.activity.main
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import com.example.musicplayer.R
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.musicplayer.data.local.data_store.music.MusicDataStore
 import com.example.musicplayer.databinding.ActivityMainBinding
-import com.example.musicplayer.ui.fragment.albums.FragmentAlbums
-import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: ViewModelMain by viewModels()
+
+    @Inject
+    lateinit var musicDataStore: MusicDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        init()
+        observe()
+    }
+
+    private fun init() = with(binding) {
+        with(musicController) {
+            setOnNextClickListener {
+                viewModel.next()
+            }
+            setOnPrevClickListener {
+                viewModel.prev()
+            }
+            setOnPausePlayClickListener {
+                viewModel.playOrPause()
+            }
+        }
+    }
+
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.currentMusicStateFlow.collect {
+                binding.musicController.setMusic(
+                    music = it,
+                    artist = viewModel.getArtist(it.artistId)?.name ?: ""
+                )
+            }
+        }
     }
 
     companion object {

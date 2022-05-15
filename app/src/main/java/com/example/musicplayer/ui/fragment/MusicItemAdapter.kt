@@ -7,7 +7,6 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.data.model.Music
-import com.example.musicplayer.utils.observeOnce
 import com.example.musicplayer.views.music_items.MusicItemView
 
 abstract class MusicItemAdapter(

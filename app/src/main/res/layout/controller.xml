@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/ic_launcher_background"
+    app:shapeAppearanceOverlay="@style/CircleImageView"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/controller_image"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/music_player_icon"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:gravity="bottom"
+                android:layout_weight="5"
+                android:id="@+id/controller_music_name"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:text="Comes Here!!"/>
+
+            <TextView
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:gravity="top"
+                android:layout_weight="3"
+                android:id="@+id/controller_music_artist"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textColor="@color/white"
+                android:textSize="12.5dp"
+                android:text="Comes Here!!"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:src="@drawable/ic_prev"
+            android:id="@+id/controller_prev"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            style="@style/ControllerIcons"/>
+
+        <ImageView
+            android:src="@drawable/ic_play"
+            android:id="@+id/controller_pause_play"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            style="@style/ControllerIcons"/>
+
+        <ImageView
+            android:src="@drawable/ic_next"
+            android:id="@+id/controller_next"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            style="@style/ControllerIcons"/>
+
+        <ImageView
+            android:src="@drawable/ic_music_list"
+            android:id="@+id/controller_currentList"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            style="@style/ControllerIcons"/>
+
+        <!--TODO add a current list icon-->
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

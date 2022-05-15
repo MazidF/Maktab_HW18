@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_more_vertical.xml" value="0.2595" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_music_list.xml" value="0.194" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_next.xml" value="0.194" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_play.xml" value="0.194" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable-anydpi/ic_prev.xml" value="0.194" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/alphabet_list.xml" value="0.1" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/back_item.xml" value="0.1" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/drawable/back_select.xml" value="0.1" />
@@ -16,6 +20,7 @@
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/activity_splash_screen.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/album_item.xml" value="0.176" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/alphabet_seekbar.xml" value="0.536" />
+        <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/controller.xml" value="0.264" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/custom_tab_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/fragment_album_list.xml" value="0.12335359675785208" />
         <entry key="..\:/Users/vcc/AndroidStudioProjects/MusicPlayer5/app/src/main/res/layout/fragment_albums.xml" value="0.25416666666666665" />

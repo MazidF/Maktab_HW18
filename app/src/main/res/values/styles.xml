@@ -12,6 +12,11 @@
         <item name="cornerSize">21%</item>
     </style>
 
+    <style name="CircleImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="singleLineTextView" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16dp</item>
         <item name="android:ellipsize">end</item>
@@ -21,5 +26,11 @@
     <style name="turningTextView" parent="Widget.AppCompat.TextView">
         <item name="android:ellipsize">marquee</item>
         <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="ControllerIcons">
+        <item name="android:tint">@color/white</item>
+        <item name="android:layout_marginStart">7dp</item>
+        <item name="android:layout_marginEnd">7dp</item>
     </style>
 </resources>

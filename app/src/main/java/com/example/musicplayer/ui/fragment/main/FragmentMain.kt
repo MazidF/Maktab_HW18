@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentMainBinding
@@ -32,6 +33,7 @@ class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
     }
 
     private fun init() = with(binding) {
+        (requireActivity() as? AppCompatActivity)?.supportActionBar?.show()
         viewpager.apply {
             adapter = MyFragmentStateAdapter(
                 this@FragmentMain,

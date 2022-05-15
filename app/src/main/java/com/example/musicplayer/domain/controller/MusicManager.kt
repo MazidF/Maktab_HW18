@@ -2,9 +2,12 @@ package com.example.musicplayer.domain.controller
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.widget.SeekBar
+import com.example.musicplayer.data.local.data_store.music.MusicState
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
+import java.util.*
 
 class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener {
@@ -23,6 +26,7 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
     }
     private val musicHandler = LiveDataWrapper<MusicHandler>()
     private var currentPosition = LiveDataWrapper(-1)
+    private var timer: Timer? = null
 
     override fun onPrepared(player: MediaPlayer) {
         start()
@@ -37,7 +41,7 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
         // TODO Not yet implemented
     }
 
-    fun changeShuffleState(hasShuffle: Boolean) {
+    private fun changeShuffleState(hasShuffle: Boolean) {
         shuffle = if (hasShuffle) {
             shuffleIntArray(musics.size)
         } else {
@@ -45,23 +49,17 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
         }
     }
 
-    /*
-    * by changing the music list (by user touch) we invoke this method
-    */
-    fun setupMusicList(list: List<Music>?, hasShuffle: Boolean?, startPosition: Int?) {
-        list?.let {
-            musics = it
-        }
-        hasShuffle?.let {
-            changeShuffleState(it)
-        }
-        if (startPosition == null) {
-            if (list != null) {
-                setupMusic(0)
-            }
-        } else {
-            setupMusic(startPosition)
-        }
+    fun setupMusicPosition(position: Int) {
+        setupMusic(position)
+    }
+
+    fun setupMusicList(list: List<Music>, startPosition: Int = 0) {
+        musics = list
+        setupMusicPosition(startPosition)
+    }
+
+    fun setupMusicShuffle(hasShuffle: Boolean) {
+        changeShuffleState(hasShuffle)
     }
 
     private fun getRealPosition(position: Int): Int {
@@ -135,5 +133,39 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
     fun prev() {
         val pos = (currentPosition.valueNotNull() - 1 + musics.size) % musics.size
         setupMusic(pos)
+    }
+
+    fun leftDuration(): Int {
+        return player.duration - player.currentPosition
+    }
+
+    private fun timerTask(seekBar: SeekBar) = object : TimerTask() {
+        override fun run() {
+            seekBar.progress = player.currentPosition
+        }
+    }
+
+    // TODO: do something else
+    fun setupSeekbar(seekBar: SeekBar) {
+        with(seekBar) {
+            progress = player.currentPosition
+            max = player.duration
+        }
+        timer = Timer().apply {
+            scheduleAtFixedRate(
+                timerTask(seekBar),
+                1_000,
+                leftDuration().toLong()
+            )
+        }
+    }
+
+    fun setupMusicState(musicState: MusicState) {
+        if (musicState.musicIsPlaying) {
+            start()
+        } else {
+            pause()
+        }
+        player.seekTo(musicState.musicPosition)
     }
 }
