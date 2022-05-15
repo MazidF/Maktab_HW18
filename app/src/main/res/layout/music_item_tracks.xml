@@ -15,6 +15,7 @@
     android:layout_marginBottom="4dp">
 
     <RadioButton
+        android:visibility="gone"
         android:id="@+id/music_item_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

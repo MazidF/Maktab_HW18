@@ -27,9 +27,8 @@ class MusicUseCase (
     val albumStateFlow = MutableStateFlow<List<Album>>(emptyList())
     val artistStateFlow = MutableStateFlow<List<Artist>>(emptyList())
 
-    lateinit var albums: HashMap<Long, Album>
-    lateinit var artists: HashMap<Long, Artist>
-    // TODO: make this maps in a flow
+    val albumMapStateFlow = MutableStateFlow<HashMap<Long, Album>>(hashMapOf())
+    val artistMapStateFlow = MutableStateFlow<HashMap<Long, Artist>>(hashMapOf())
 
     init {
         scope.launch {
@@ -43,28 +42,14 @@ class MusicUseCase (
             launch {
                 repository.getAllAlbums().collect {
                     albumStateFlow.emit(it)
+                    albumMapStateFlow.emit(it.toMap { key ->  key.id })
                 }
             }
             launch {
                 repository.getAllArtists().collect {
                     artistStateFlow.emit(it)
+                    artistMapStateFlow.emit(it.toMap { key ->  key.id })
                 }
-            }
-            launch {
-                val temp = artistStateFlow.first {
-                    it.isNotEmpty()
-                }.toMap {
-                    it.id
-                }
-                artists = temp
-            }
-            launch {
-                val temp = albumStateFlow.first {
-                    it.isNotEmpty()
-                }.toMap {
-                    it.id
-                }
-                albums = temp
             }
         }
     }

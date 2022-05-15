@@ -15,6 +15,7 @@ import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.ui.fragment.albums.FragmentAlbums
 import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
 class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
 
@@ -33,7 +34,6 @@ class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
     }
 
     private fun init() = with(binding) {
-        (requireActivity() as? AppCompatActivity)?.supportActionBar?.show()
         viewpager.apply {
             adapter = MyFragmentStateAdapter(
                 this@FragmentMain,

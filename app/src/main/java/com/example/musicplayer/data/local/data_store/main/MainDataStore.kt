@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.musicplayer.di.annotations.DispatcherIO
 import com.example.musicplayer.di.annotations.HasBeenLoaded
+import com.example.musicplayer.utils.logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -16,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
-private const val DATA_STORE_NAME = "music_datastore"
+private const val DATA_STORE_NAME = "main_datastore"
 private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = DATA_STORE_NAME)
 
 @Singleton
@@ -26,8 +27,8 @@ class MainDataStore @Inject constructor(
 ) {
     private val dataStore = context.datastore
 
-    val preferences = dataStore.data.catch {
-
+    val preferences = dataStore.data.catch { cause ->
+        logger(cause.message.toString())
     }.map { preference ->
         val hasBeenLoaded = preference[MainPreferencesKey.MUSIC_HAS_LOADED] ?: false
         MainInfo(

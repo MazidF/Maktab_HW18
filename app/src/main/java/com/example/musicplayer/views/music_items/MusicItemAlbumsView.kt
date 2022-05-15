@@ -22,7 +22,7 @@ class MusicItemAlbumsView  : MusicItemView {
         attr: AttributeSet
     ) : super(context, attr, R.layout.music_item_albums)
 
-    private lateinit var binding: MusicItemAlbumsBinding
+    lateinit var binding: MusicItemAlbumsBinding
 
     override fun onViewCreated(view: View) {
         binding = MusicItemAlbumsBinding.bind(view).apply {

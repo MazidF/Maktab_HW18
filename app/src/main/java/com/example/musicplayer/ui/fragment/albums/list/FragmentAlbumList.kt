@@ -32,12 +32,17 @@ class FragmentAlbumList : FragmentWithOnBackListener(R.layout.fragment_album_lis
 
     private fun init() = with(binding) {
         albumAdapter = MusicAlbumsItemAdapter(
-            onItemClick = this@FragmentAlbumList::onClick
+            onItemClick = this@FragmentAlbumList::onClick,
+            onMoreClick = this@FragmentAlbumList::onMoreClick,
+            viewLifecycleOwner
         )
         albumList.adapter = albumAdapter
     }
 
-    private fun onClick(music: Music) {
+    private fun onClick(music: Music, pos: Int) {
+
+    }
+    private fun onMoreClick(music: Music) {
 
     }
 
@@ -48,8 +53,7 @@ class FragmentAlbumList : FragmentWithOnBackListener(R.layout.fragment_album_lis
     }
 
     override fun onBackPressed(): Boolean {
-        // TODO: clear selection state if needed
-        return false
+        return albumAdapter.clearSelection()
     }
 
     override fun onDestroyView() {

@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.datastore.dataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,6 +26,7 @@ import com.example.musicplayer.R
 import com.example.musicplayer.data.local.data_store.main.MainDataStore
 import com.example.musicplayer.databinding.FragmentSplashBinding
 import com.example.musicplayer.domain.MusicUseCase
+import com.example.musicplayer.ui.ViewModelApp
 import com.example.musicplayer.utils.repeatLaunchOnState
 import com.example.musicplayer.workmanager.LoadMusicWorker
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +48,8 @@ class FragmentSplash : Fragment(R.layout.fragment_splash) {
 
     private val permission = Manifest.permission.READ_EXTERNAL_STORAGE
 
+    private val appViewModel: ViewModelApp by activityViewModels()
+
     @Inject
     lateinit var useCase: MusicUseCase
 
@@ -54,12 +59,7 @@ class FragmentSplash : Fragment(R.layout.fragment_splash) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSplashBinding.bind(view)
-        init()
         observer()
-    }
-
-    private fun init() {
-        (requireActivity() as? AppCompatActivity)?.supportActionBar?.hide()
     }
 
     private fun observer() {
@@ -116,6 +116,7 @@ class FragmentSplash : Fragment(R.layout.fragment_splash) {
             FragmentSplashDirections.actionFragmentSplashToFragmentMain(),
             navOptions = navOptions
         )
+        appViewModel.hasSplashEnded.value = true
     }
 
     override fun onDestroyView() {

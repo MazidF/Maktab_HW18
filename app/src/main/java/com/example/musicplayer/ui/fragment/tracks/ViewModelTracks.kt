@@ -14,9 +14,7 @@ import javax.inject.Inject
 class ViewModelTracks @Inject constructor(
     private val useCase: MusicUseCase
 ): ViewModel() {
-    val artists by lazy {
-        useCase.artists
-    }
+    fun artists() = useCase.artistMapStateFlow.value
 
     val musicList: LiveData<PagedList<Music>> = useCase.getTracksPaging().toLiveData(MUSIC_PER_PAGE)
 }

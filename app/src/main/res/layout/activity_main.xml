@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.main.MainActivity">
 
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -16,6 +15,8 @@
         app:navGraph="@navigation/nav_graph"/>
 
     <com.example.musicplayer.views.music_controller.ControllerView
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
         android:id="@+id/music_controller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

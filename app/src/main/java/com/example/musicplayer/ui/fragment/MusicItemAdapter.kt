@@ -1,31 +1,11 @@
 package com.example.musicplayer.ui.fragment
 
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedListAdapter
-import androidx.recyclerview.selection.ItemDetailsLookup
-import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.data.model.Music
-import com.example.musicplayer.views.music_items.MusicItemView
 
-abstract class MusicItemAdapter(
-    private val onItemClick: (Music) -> Unit
-) : PagedListAdapter<Music, MusicItemAdapter.MusicHolder>(DIFF_ITEM_CALLBACK) {
-    private var tracker: SelectionTracker<Long>? = null
-
-    fun setTracker(tracker: SelectionTracker<Long>) {
-        this.tracker = tracker
-        tracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                super.onSelectionChanged()
-                val hasSelection = tracker.hasSelection()
-                if (hasSelection != isSelecting.value) {
-                    isSelecting.value = hasSelection
-                }
-            }
-        })
-    }
+abstract class MusicItemAdapter<T : RecyclerView.ViewHolder> : PagedListAdapter<Music, T>(DIFF_ITEM_CALLBACK) {
 
     companion object {
         val DIFF_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Music>() {
@@ -42,73 +22,6 @@ abstract class MusicItemAdapter(
             ): Boolean {
                 return oldItem == newItem
             }
-        }
-    }
-
-    init {
-        setHasStableIds(true)
-    }
-
-    final override fun setHasStableIds(hasStableIds: Boolean) {
-        super.setHasStableIds(hasStableIds)
-    }
-
-    override fun getItemId(position: Int) = position.toLong()
-
-    val isSelecting by lazy {
-        MutableLiveData(false)
-    }
-
-    abstract inner class MusicHolder(
-        private val view: MusicItemView
-    ) : RecyclerView.ViewHolder(view) {
-        private var music: Music? = null
-        init {
-            with(view) {
-                setOnClickListener {
-                    music?.let(onItemClick)
-                }
-            }
-            isSelecting.observeForever {
-                view.isActivated = (it == true)
-            }
-        }
-
-        fun innerBind(music: Music, isSelected: Boolean) {
-            this.music = music
-            select(isSelected)
-            bind(music)
-        }
-
-        abstract fun bind(music: Music)
-
-        abstract fun select(isSelected: Boolean)
-
-        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> {
-            return object : ItemDetailsLookup.ItemDetails<Long>() {
-                override fun getPosition(): Int = adapterPosition
-                override fun getSelectionKey(): Long = itemId
-            }
-        }
-    }
-
-    fun selectAll(selected: Boolean) {
-        tracker?.setItemsSelected(0L..(currentList?.size ?: 0), selected)
-    }
-
-    fun clearSelection(): Boolean {
-        tracker?.let {
-            return it.clearSelection()
-        }
-        return false
-    }
-
-    override fun onBindViewHolder(holder: MusicHolder, position: Int) {
-        getItem(position)?.let { music ->
-            tracker?.let { selection ->
-                return holder.innerBind(music, selection.isSelected(position.toLong()))
-            }
-            holder.bind(music)
         }
     }
 }

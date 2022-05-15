@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.musicplayer.R
+import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.FragmentTracksBinding
+import com.example.musicplayer.ui.ViewModelApp
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.ui.selection.createSelectionTracker
 import com.example.musicplayer.utils.createAlphabetScrollbar
@@ -22,6 +24,7 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     private val binding get() = _binding!!
 
     private val viewModel: ViewModelTracks by viewModels()
+    private val appViewModel: ViewModelApp by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,19 +35,17 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
 
     private fun init() = with(binding) {
         musicAdapter = MusicTracksItemAdapter(
-            artistList = viewModel.artists,
-            onItemClick = this@FragmentTracks::onClick
-        ).also {
-            it.isSelecting.observe(viewLifecycleOwner) { bool ->
-                Toast.makeText(requireContext(), bool.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
+            artistList = viewModel.artists(),
+            onItemClick = this@FragmentTracks::onClick,
+            onMoreClick = this@FragmentTracks::onMoreClick,
+            lifecycleOwner = viewLifecycleOwner
+        )/*.also {
+            // TODO: change action bar
+//            it.isSelected.observe(viewLifecycleOwner) { bool ->
+//            }
+        }*/
         trackList.apply {
             adapter = musicAdapter
-            musicAdapter.setTracker(createSelectionTracker(
-                id = SELECTION_ID,
-                recyclerView = this
-            ))
         }
         scrollbarInit()
     }
@@ -61,12 +62,17 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
         }
     }
 
-    private fun onClick(music: Music) {
+    private fun onClick(music: Music, pos: Int) {
+        val position = pos
+//        appViewModel.updateMusicLists(MusicLists.TRACKS, null, musicAdapter)
+    }
+    private fun onMoreClick(music: Music) {
 
     }
 
     private fun observer() = with(binding) {
         viewModel.musicList.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it.positionOffset.toString(), Toast.LENGTH_SHORT).show()
             musicAdapter.submitList(it)
         }
     }

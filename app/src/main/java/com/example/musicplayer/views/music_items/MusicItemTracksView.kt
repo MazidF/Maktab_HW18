@@ -25,7 +25,7 @@ class MusicItemTracksView  : MusicItemView {
         attr: AttributeSet
     ) : super(context, attr, R.layout.music_item_tracks)
 
-    private lateinit var binding: MusicItemTracksBinding
+    lateinit var binding: MusicItemTracksBinding
 
     override fun onViewCreated(view: View) {
         binding = MusicItemTracksBinding.bind(view)
@@ -40,7 +40,7 @@ class MusicItemTracksView  : MusicItemView {
         musicItemSelect.set(isSelected)
     }
 
-    suspend fun setMusic(music: Music, artistName: String) = with(binding) {
+/*    suspend fun setMusic(music: Music, artistName: String) = with(binding) {
         musicItemName.text = music.name
         musicItemArtist.text = artistName
         val icon = music.getAlbumImage()
@@ -51,7 +51,7 @@ class MusicItemTracksView  : MusicItemView {
                 .error(R.drawable.music_player_icon)
                 .into(musicItemImage)
         }
-    }
+    }*/
 
     fun setOnSelectionChangedListener(block: (Boolean) -> Unit) {
         binding.musicItemSelect.setup {

@@ -18,12 +18,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 @HiltViewModel
 class ViewModelMain @Inject constructor(
     private val useCase: MusicUseCase,
     private val musicDataStore: MusicDataStore,
-    val manager: MusicManager
 ) : ViewModel() {
     private var _musicStateStateFlow = MutableStateFlow<MusicState>(empty)
     val musicStateStateFlow get() = _musicStateStateFlow.asStateFlow()
@@ -120,7 +118,7 @@ class ViewModelMain @Inject constructor(
     }
 
     fun getArtist(artistId: Long): Artist? {
-        return useCase.artists[artistId]
+        return useCase.artistMapStateFlow.value[artistId]
     }
 
     fun next() {

@@ -12,6 +12,7 @@ class MusicItemDetailLookup(
     override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
         val view = recyclerView.findChildViewUnder(event.x, event.y) ?: return null
         val holder = recyclerView.getChildViewHolder(view)
-        return (holder as MusicItemAdapter.MusicHolder).getItemDetails()
+//        return (holder as MusicItemAdapter.MusicHolder).getItemDetails()
+        return null
     }
 }

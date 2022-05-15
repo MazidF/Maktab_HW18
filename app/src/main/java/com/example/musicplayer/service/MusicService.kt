@@ -4,13 +4,14 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.example.musicplayer.domain.controller.MusicManager
 import com.example.musicplayer.ui.activity.main.ViewModelMain
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import com.example.musicplayer.service.ServiceControlInput.*
 
-@AndroidEntryPoint
+
 class MusicService : Service() {
     // add SupervisorJob() makes it cancelable
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -18,6 +19,8 @@ class MusicService : Service() {
         MusicBinder()
     }
 
+    @Inject
+    lateinit var manager: MusicManager
     @Inject
     lateinit var viewModel: ViewModelMain
 
