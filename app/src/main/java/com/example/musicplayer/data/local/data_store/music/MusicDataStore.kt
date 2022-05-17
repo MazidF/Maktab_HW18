@@ -24,9 +24,11 @@ class MusicDataStore @Inject constructor(
     @ApplicationContext context: Context,
     @DispatcherIO dispatcher: CoroutineContext
 ) {
+
     private val datastore = context.datastore
     val preferences: Flow<MusicPreferenceInfo> = datastore.data.catch {
         // TODO: no idea for this part.
+        println()
     }.map { preference ->
         val musicList = preference[MusicPreferencesKey.MUSIC_LIST_KEY]?.let { className ->
             when(className) {
@@ -38,17 +40,17 @@ class MusicDataStore @Inject constructor(
                     val artistId = preference[MusicPreferencesKey.MUSIC_ARTIST_ID_KEY]!!
                     MusicLists.ARTISTS(artistId)
                 }
-                MusicLists.FAVORITES.name() -> MusicLists.FAVORITES
-                MusicLists.TRACKS.name() -> MusicLists.TRACKS
+                MusicLists.FAVORITES::class.java.simpleName -> MusicLists.FAVORITES()
+                MusicLists.TRACKS::class.java.simpleName -> MusicLists.TRACKS()
                 else -> {
                     throw Exception("Invalid ClassName for MusicLists.")
                 }
             }
-        } ?: MusicLists.TRACKS
+        } ?: MusicLists.TRACKS()
         val musicIndex = preference[MusicPreferencesKey.MUSIC_INDEX_KEY] ?: 0
         val hasShuffle = preference[MusicPreferencesKey.MUSIC_HAS_SHUFFLE_KEY] ?: false
         val musicState = MusicState(
-            musicPosition = preference[MusicPreferencesKey.MUSIC_POSITION_KEY] ?: 0,
+            musicPosition = preference[MusicPreferencesKey.MUSIC_POSITION_KEY] ?: -1,
             musicIsPlaying = preference[MusicPreferencesKey.MUSIC_IS_PLAYING_KEY] ?: false,
         )
         MusicPreferenceInfo(

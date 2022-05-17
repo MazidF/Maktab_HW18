@@ -19,6 +19,13 @@
         <argument
             android:name="album"
             app:argType="com.example.musicplayer.data.model.Album" />
+        <action
+            android:id="@+id/action_fragmentAlbumList_to_fragmentMusicViewer"
+            app:destination="@id/fragmentMusicViewer"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         tools2:layout="@layout/fragment_albums"
@@ -33,6 +40,13 @@
         <action
             android:id="@+id/action_fragmentMain_to_fragmentAlbumList"
             app:destination="@id/fragmentAlbumList" />
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentMusicViewer"
+            app:destination="@id/fragmentMusicViewer"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/fragmentSplash"
@@ -43,4 +57,9 @@
             android:id="@+id/action_fragmentSplash_to_fragmentMain"
             app:destination="@id/fragmentMain" />
     </fragment>
+    <fragment
+        android:id="@+id/fragmentMusicViewer"
+        android:name="com.example.musicplayer.ui.fragment.music_viewer.FragmentMusicViewer"
+        android:label="FragmentMusicViewer"
+        tools:layout="@layout/fragment_music"/>
 </navigation>

@@ -72,13 +72,15 @@ class FragmentSplash : Fragment(R.layout.fragment_splash) {
 
     override fun onStart() {
         super.onStart()
-        useCase // calling the object to make sure init {} will be called
-        binding.root.animate().alpha(1f).withEndAction {
-            thread {
-                Thread.sleep(1000)
-                permissionLauncher.launch(permission)
-            }
-        }.duration = 1500
+        if (appViewModel.hasSplashEnded.value != true) {
+            useCase // calling the object to make sure init {} will be called
+            binding.root.animate().alpha(1f).withEndAction {
+                thread {
+                    Thread.sleep(1000)
+                    permissionLauncher.launch(permission)
+                }
+            }.duration = 1500
+        }
     }
 
     override fun onAttach(context: Context) {

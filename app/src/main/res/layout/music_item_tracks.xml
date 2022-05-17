@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"/>
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:scaleType="fitXY"
         app:shapeAppearanceOverlay="@style/ImageViewWithCorner"
         android:background="@color/black"
         android:layout_width="50dp"
@@ -35,6 +36,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:singleLine="true"
             android:id="@+id/music_item_name"
             style="@style/singleLineTextView"
             android:gravity="bottom"
@@ -45,6 +47,7 @@
             android:layout_height="0dp"/>
 
         <TextView
+            android:singleLine="true"
             android:id="@+id/music_item_artist"
             android:gravity="top"
             android:textSize="11dp"

@@ -1,59 +1,56 @@
 package com.example.musicplayer.service
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.example.musicplayer.domain.controller.MusicManager
+import android.widget.RemoteViews
+import com.example.musicplayer.R
+import com.example.musicplayer.data.local.data_store.music.MusicDataStore
+import com.example.musicplayer.domain.MusicUseCase
+import com.example.musicplayer.notification.NotificationHandler
+import com.example.musicplayer.service.ServiceControlInput.*
+import com.example.musicplayer.ui.activity.main.MainActivity
 import com.example.musicplayer.ui.activity.main.ViewModelMain
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Inject
-import com.example.musicplayer.service.ServiceControlInput.*
 
-
+@AndroidEntryPoint
 class MusicService : Service() {
     // add SupervisorJob() makes it cancelable
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val binder by lazy {
-        MusicBinder()
+        MusicBinder(this)
     }
 
     @Inject
-    lateinit var manager: MusicManager
+    lateinit var notificationManager: NotificationHandler
+
     @Inject
-    lateinit var viewModel: ViewModelMain
+    lateinit var useCase: MusicUseCase
+
+    @Inject
+    lateinit var musicDataStore: MusicDataStore
+
+    val viewModel by lazy {
+        ViewModelMain.getInstance()
+    }
 
     private var bindCounter = 0
     fun isBounded() = bindCounter != 0
 
     override fun onCreate() {
         super.onCreate()
-        observe()
+        init()
     }
 
-    // TODO: move observe() to viewModel
-    private fun observe() = with(viewModel) {
-        scope.launch {
-            musicsStateFlow.collect {
-                manager.setupMusicList(it, getCurrentMusicPosition())
-            }
-        }
-        scope.launch {
-            hasShuffleStateFlow.collect {
-                manager.setupMusicShuffle(it)
-            }
-        }
-        scope.launch {
-            musicIndexStateFlow.collect {
-                manager.setupMusicPosition(it)
-            }
-        }
-        scope.launch {
-            musicStateStateFlow.collect {
-                manager.setupMusicState(it)
-            }
-        }
+    private fun init() = with(viewModel) {
+        setup()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -64,7 +61,7 @@ class MusicService : Service() {
     }
 
     private fun commandHandler(intent: Intent) {
-        when(intent.action) {
+        when (intent.action) {
             NEXT.name -> {
                 viewModel.next()
             }
@@ -74,21 +71,49 @@ class MusicService : Service() {
             PLAY_PAUSE.name -> {
                 viewModel.playOrPause()
             }
-            OPEN_APP.name -> {
-                // TODO: use pending intent in notification
-            }
             CLOSE.name -> {
-
+                notificationManager.cancelNotification()
             }
-            else -> {
-
+            START.name -> {
+                startNotification()
             }
         }
     }
 
-    inner class MusicBinder : Binder() {
+    private fun startNotification() {
+        val view = createView()
+        val builder = notificationManager.getNotificationBuilder(
+            view,
+            PendingIntent.getActivity(
+                this,
+                1,
+                MainActivity.getIntent(this),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+        notificationManager.startNotification(builder)
+    }
+
+    @SuppressLint("RemoteViewLayout")
+    private fun createView(): RemoteViews {
+        return RemoteViews(packageName, R.layout.notification_small).apply {
+            setOnClickPendingIntent(R.id.notification_next, createPendingIntent(NEXT))
+            setOnClickPendingIntent(R.id.notification_pause_play, createPendingIntent(PLAY_PAUSE))
+            setOnClickPendingIntent(R.id.notification_prev, createPendingIntent(PREV))
+        }
+    }
+
+    // TODO: search about flag
+    private fun createPendingIntent(input: ServiceControlInput): PendingIntent {
+        val intent = Intent(this, MusicService::class.java)
+        return PendingIntent.getService(this, input.ordinal, intent, PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    class MusicBinder(
+        private val service: MusicService
+    ) : Binder() {
         fun doTask(block: (MusicService) -> Unit) {
-            block(this@MusicService)
+            block(service)
         }
     }
 
@@ -105,5 +130,10 @@ class MusicService : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         bindCounter--
         return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        viewModel.saveState()
+        super.onDestroy()
     }
 }

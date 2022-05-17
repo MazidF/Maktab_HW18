@@ -66,15 +66,11 @@ class MusicUseCase (
             is MusicLists.ARTISTS -> {
                 repository.getMusicByArtist(musicLists.artistId)
             }
-            MusicLists.FAVORITES -> {
+            is MusicLists.FAVORITES -> {
                 repository.getFavoriteMusics()
             }
-            MusicLists.TRACKS -> {
-                flow {
-                    musicStateFlow.collect {
-                        emit(it)
-                    }
-                }.flowOn(dispatcher)
+            is MusicLists.TRACKS -> {
+                repository.getAllMusics()
             }
         }
     }

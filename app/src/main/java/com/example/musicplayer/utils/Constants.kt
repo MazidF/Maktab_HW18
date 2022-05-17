@@ -14,9 +14,11 @@ object Constants {
 
     val glideDiskCacheStrategy = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
 
-    const val MUSIC_PER_PAGE = 40 // even more :)
+    const val MUSIC_PER_PAGE: Int = 40 // even more :)
 
     const val ALBUM_OR_ARTIST_PER_PAGE = 10 // even less :)
 
-    val musicBitmaps = HashMap<Long, Bitmap?>(50)
+    val musicBitmaps = Array<Pair<Long, Bitmap?>>(MUSIC_PER_PAGE) {
+        0L to null
+    }
 }

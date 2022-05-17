@@ -17,6 +17,7 @@ import com.example.musicplayer.utils.sharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,12 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideMusicManager() : MusicManager {
+        return MusicManager()
+    }
+
+    @Provides
+    @Singleton
     @DispatcherMain
     fun provideDispatcherMain() : CoroutineContext {
         return Dispatchers.Main
@@ -84,12 +91,6 @@ class AppModule {
     @DispatcherDefault
     fun provideDispatcherDefault() : CoroutineContext {
         return Dispatchers.Default
-    }
-
-    @Provides
-    @Singleton
-    fun provideMusicManager(): MusicManager {
-        return MusicManager()
     }
 
 }

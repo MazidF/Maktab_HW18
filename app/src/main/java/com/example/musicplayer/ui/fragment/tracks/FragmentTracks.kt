@@ -2,7 +2,6 @@ package com.example.musicplayer.ui.fragment.tracks
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.musicplayer.R
 import com.example.musicplayer.data.local.data_store.music.MusicLists
@@ -12,6 +11,7 @@ import com.example.musicplayer.ui.ViewModelApp
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.ui.selection.createSelectionTracker
 import com.example.musicplayer.utils.createAlphabetScrollbar
+import com.example.musicplayer.utils.logger
 import com.example.musicplayer.utils.smoothSnapToPosition
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -63,16 +63,15 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     }
 
     private fun onClick(music: Music, pos: Int) {
-        val position = pos
-//        appViewModel.updateMusicLists(MusicLists.TRACKS, null, musicAdapter)
+        appViewModel.updateMusicLists(MusicLists.TRACKS(), null, pos)
     }
+
     private fun onMoreClick(music: Music) {
 
     }
 
     private fun observer() = with(binding) {
         viewModel.musicList.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it.positionOffset.toString(), Toast.LENGTH_SHORT).show()
             musicAdapter.submitList(it)
         }
     }

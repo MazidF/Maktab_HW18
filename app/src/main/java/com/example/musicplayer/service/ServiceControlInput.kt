@@ -4,6 +4,6 @@ enum class ServiceControlInput {
     NEXT,
     PREV,
     PLAY_PAUSE,
-    OPEN_APP,
-    CLOSE
+    CLOSE,
+    START
 }

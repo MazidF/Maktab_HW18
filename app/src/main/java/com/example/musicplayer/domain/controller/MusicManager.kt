@@ -7,7 +7,16 @@ import com.example.musicplayer.data.local.data_store.music.MusicState
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
+import dagger.hilt.android.scopes.ServiceScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener {
@@ -24,21 +33,36 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
                 .build()
         )
     }
-    private val musicHandler = LiveDataWrapper<MusicHandler>()
+    val musicHandler = LiveDataWrapper<MusicHandler>()
     private var currentPosition = LiveDataWrapper(-1)
-    private var timer: Timer? = null
 
-    override fun onPrepared(player: MediaPlayer) {
-        start()
+    private var onCompletion: () -> Unit = {next()}
+    fun setOnCompletion(onCompletion: () -> Unit) {
+        this.onCompletion = onCompletion
+    }
+
+    private var onPrepared: () -> Unit = {start()}
+    fun setOnPrepared(onPrepared: () -> Unit) {
+        this.onPrepared = {
+            onPrepared()
+            if (musicHandler.value() == null) {
+                musicHandler.setValue(MusicHandler())
+            } else {
+                start()
+            }
+        }
     }
 
     override fun onCompletion(player: MediaPlayer) {
-        next()
+        onCompletion()
+    }
+
+    override fun onPrepared(player: MediaPlayer) {
+        onPrepared()
     }
 
     override fun onError(player: MediaPlayer, what: Int, extra: Int): Boolean {
-        return false
-        // TODO Not yet implemented
+        throw Exception("OnError!!")
     }
 
     private fun changeShuffleState(hasShuffle: Boolean) {
@@ -50,12 +74,19 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
     }
 
     fun setupMusicPosition(position: Int) {
+        val temp = shuffle
+        shuffle = null
         setupMusic(position)
+        shuffle = temp
     }
 
     fun setupMusicList(list: List<Music>, startPosition: Int = 0) {
+        // TODO: setup position make problem
+        if (list.isEmpty()) return
         musics = list
-        setupMusicPosition(startPosition)
+        if (startPosition >= 0) {
+            setupMusicPosition(startPosition)
+        }
     }
 
     fun setupMusicShuffle(hasShuffle: Boolean) {
@@ -71,7 +102,7 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
     }
 
     private fun setupMusic(position: Int) {
-        currentPosition.setValue(position)
+        currentPosition.postValue(position)
         setupMusic(getMusic(getRealPosition(position)))
     }
 
@@ -108,12 +139,10 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
 
     private fun stop() {
         player.stop()
-        musicHandler.apply {
-            it.isPlaying = false
-        }
     }
 
     private fun reset() {
+        stop()
         player.reset()
     }
 
@@ -139,33 +168,31 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
         return player.duration - player.currentPosition
     }
 
-    private fun timerTask(seekBar: SeekBar) = object : TimerTask() {
-        override fun run() {
-            seekBar.progress = player.currentPosition
-        }
-    }
-
-    // TODO: do something else
-    fun setupSeekbar(seekBar: SeekBar) {
-        with(seekBar) {
-            progress = player.currentPosition
-            max = player.duration
-        }
-        timer = Timer().apply {
-            scheduleAtFixedRate(
-                timerTask(seekBar),
-                1_000,
-                leftDuration().toLong()
-            )
+    fun syncSeekbar(): Flow<Int> {
+        return flow {
+            while (true) {
+                emit(player.currentPosition)
+                delay(1000)
+            }
         }
     }
 
     fun setupMusicState(musicState: MusicState) {
-        if (musicState.musicIsPlaying) {
+        if (musicState.musicIsPlaying && player.isPlaying.not()) {
             start()
-        } else {
+        } else if(musicState.musicIsPlaying.not() && player.isPlaying) {
             pause()
         }
-        player.seekTo(musicState.musicPosition)
+        if (musicState.musicPosition >= 0) {
+            player.seekTo(musicState.musicPosition)
+        }
+    }
+
+    fun seekTo(pos: Int) {
+        player.seekTo(pos)
+    }
+
+    fun duration(): Int {
+        return player.duration
     }
 }

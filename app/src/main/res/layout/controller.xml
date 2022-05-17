@@ -19,6 +19,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="5dp"
+            android:scaleType="fitXY"
             android:src="@drawable/music_player_icon"/>
 
         <LinearLayout
@@ -28,6 +29,7 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:gravity="bottom"
@@ -36,10 +38,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:textColor="@color/white"
-                android:textSize="16dp"
+                android:textSize="18dp"
                 android:text="Comes Here!!"/>
 
             <TextView
+                android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:gravity="top"

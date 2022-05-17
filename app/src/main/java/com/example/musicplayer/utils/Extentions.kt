@@ -1,5 +1,6 @@
 package com.example.musicplayer.utils
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -15,11 +16,14 @@ import android.os.Vibrator
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -37,9 +41,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
-import kotlin.collections.HashMap
+import javax.xml.datatype.DatatypeConstants.DURATION
 
 
 typealias MediaInfo = MediaStore.Audio.Media
@@ -398,3 +403,25 @@ fun loadMusics(
     return loadMusics(context, uri, cb, mainDatastore).collectAsList(20)
 }
 
+fun ImageView.saveImage(root: File, fileName: String, context: Context): String? {
+    val bitmap = this.drawable?.toBitmap() ?: return null
+    val file = File(root, fileName)
+    return FileOutputStream(file).use { outStream ->
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream)
+        file.absolutePath
+    }
+}
+
+fun View.scale(scale: Int, duration: Long) {
+    val anim = ValueAnimator.ofInt(1, scale)
+    anim.addUpdateListener { valueAnimator ->
+        val newHeight = this.height * valueAnimator.animatedValue as Int
+        val newWidth = this.width *  valueAnimator.animatedValue as Int
+        val layoutParams: ViewGroup.LayoutParams = layoutParams
+        layoutParams.height = newHeight
+        layoutParams.width = newWidth
+        this.layoutParams = layoutParams
+    }
+    anim.duration = duration
+    anim.start()
+}

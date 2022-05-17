@@ -1,11 +1,7 @@
 package com.example.musicplayer.ui.fragment.main
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentMainBinding
 import com.example.musicplayer.ui.activity.main.MyFragmentStateAdapter
@@ -15,7 +11,6 @@ import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.ui.fragment.albums.FragmentAlbums
 import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
 import com.google.android.material.tabs.TabLayoutMediator
-import dagger.hilt.android.AndroidEntryPoint
 
 class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
 

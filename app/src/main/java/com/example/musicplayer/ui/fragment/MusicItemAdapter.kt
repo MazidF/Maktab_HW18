@@ -5,7 +5,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.data.model.Music
 
-abstract class MusicItemAdapter<T : RecyclerView.ViewHolder> : PagedListAdapter<Music, T>(DIFF_ITEM_CALLBACK) {
+abstract class MusicItemAdapter<T : RecyclerView.ViewHolder> :
+    PagedListAdapter<Music, T>(DIFF_ITEM_CALLBACK) {
 
     companion object {
         val DIFF_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Music>() {

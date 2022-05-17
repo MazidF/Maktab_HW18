@@ -14,6 +14,7 @@ import com.example.musicplayer.databinding.MusicItemTracksBinding
 import com.example.musicplayer.ui.fragment.MusicItemAdapter
 import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.set
+import com.example.musicplayer.utils.setup
 import com.example.musicplayer.utils.vibrate
 import kotlinx.coroutines.*
 
@@ -82,6 +83,12 @@ class MusicTracksItemAdapter(
                 musicItemMore.setOnClickListener {
 
                 }
+                musicItemSelect.setOnClickListener {
+                    musicItemSelect.setup {
+
+                    }
+                }
+                // TODO: add onClickListener to radio_button
             }
         }
 

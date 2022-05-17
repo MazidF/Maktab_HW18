@@ -20,10 +20,13 @@ class ControllerView @JvmOverloads constructor(
 ) : MaterialCardView(context, attrs) {
     private val binding: ControllerBinding
     private val scope = CoroutineScope(Dispatchers.IO)
+    private var isPlaying: Boolean? = null
 
     init {
         val root = inflate(context, R.layout.controller, this)
         binding = ControllerBinding.bind(root)
+        binding.controllerMusicName.isSelected = true
+        binding.controllerMusicArtist.isSelected = true
     }
 
     fun setMusic(music: Music, artist: String) = with(binding) {
@@ -38,6 +41,15 @@ class ControllerView @JvmOverloads constructor(
                     .into(controllerImage)
             }
         }
+    }
+
+    fun setIsPlaying(isPlaying: Boolean) {
+        if (isPlaying != this.isPlaying) {
+            binding.controllerPausePlay.setImageResource(
+                if (isPlaying.not()) R.drawable.ic_play else R.drawable.ic_pause
+            )
+        }
+        this.isPlaying = isPlaying
     }
 
     private fun setBackgroundTheme() {

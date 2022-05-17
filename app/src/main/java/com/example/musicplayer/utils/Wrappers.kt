@@ -24,7 +24,7 @@ class LiveDataWrapper<T>(t: T? = null) {
     }
 
     fun apply(apply: (T) -> Unit) {
-        setValue(value()?.apply(apply))
+        postValue(value()?.apply(apply))
     }
 
     fun setValue(t: T?) {

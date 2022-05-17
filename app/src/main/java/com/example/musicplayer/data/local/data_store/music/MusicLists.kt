@@ -1,15 +1,21 @@
 package com.example.musicplayer.data.local.data_store.music
 
 sealed class MusicLists {
-    object TRACKS: MusicLists()
-
-    object FAVORITES: MusicLists()
-
-    class ALBUMS(
+    class TRACKS: MusicLists() {
+        override fun equals(other: Any?): Boolean {
+            return other is TRACKS
+        }
+    }
+    class FAVORITES: MusicLists() {
+        override fun equals(other: Any?): Boolean {
+            return other is FAVORITES
+        }
+    }
+    data class ALBUMS(
         val albumId: Long,
     ): MusicLists()
 
-    class ARTISTS(
+    data class ARTISTS(
         val artistId: Long,
     ): MusicLists()
 
