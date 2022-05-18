@@ -30,6 +30,8 @@ class NotificationHandler @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var updateJob: Job? = null
+
     private val manager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -183,10 +185,13 @@ class NotificationHandler @Inject constructor(
         }
     }
 
-    private fun notifyUpdate() {
+    private fun notifyUpdate() = scope.launch {
         if (hasStared) {
-            notification?.let {
-                NotificationManagerCompat.from(context).notify(notificationId, it)
+            updateJob?.cancelAndJoin()
+            updateJob = scope.launch {
+                notification?.let {
+                    NotificationManagerCompat.from(context).notify(notificationId, it)
+                }
             }
         }
     }

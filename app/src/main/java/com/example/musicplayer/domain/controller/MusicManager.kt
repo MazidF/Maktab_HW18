@@ -5,14 +5,14 @@ import android.media.MediaPlayer
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.utils.LiveDataWrapper
 import com.example.musicplayer.utils.shuffleIntArray
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener {
 
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var setupJob: Job? = null
 
     private var musics: List<Music> = listOf()
@@ -30,12 +30,12 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
     val musicHandler = LiveDataWrapper<MusicHandler>(MusicHandler())
     private var currentPosition = LiveDataWrapper(-1)
 
-    private var onCompletion: () -> Unit = {next()}
+    private var onCompletion: () -> Unit = { next() }
     fun setOnCompletion(onCompletion: () -> Unit) {
         this.onCompletion = onCompletion
     }
 
-    private var onPrepared: () -> Unit = {start()}
+    private var onPrepared: () -> Unit = { start() }
     fun setOnPrepared(onPrepared: () -> Unit) {
         this.onPrepared = {
             onPrepared()
@@ -101,15 +101,18 @@ class MusicManager : MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionLis
         setupMusic(getMusic(getRealPosition(position)), fromUser)
     }
 
-    private fun setupMusic(music: Music, fromUser: Boolean) {
-        reset()
-        setDataSource(music)
-        if (fromUser) {
-            musicHandler.apply {
-                it.isPlaying = true
+    private fun setupMusic(music: Music, fromUser: Boolean) = scope.launch {
+        setupJob?.cancelAndJoin()
+        setupJob = scope.launch {
+            reset()
+            setDataSource(music)
+            if (fromUser) {
+                musicHandler.apply {
+                    it.isPlaying = true
+                }
             }
+            prepare()
         }
-        prepare()
     }
 
     private fun setDataSource(music: Music) {
