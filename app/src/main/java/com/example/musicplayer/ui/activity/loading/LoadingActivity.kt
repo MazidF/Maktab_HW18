@@ -27,7 +27,7 @@ class LoadingActivity : AppCompatActivity() {
 
     private fun onPermissionResult(hasAccess: Boolean) {
         if (hasAccess) {
-            startActivity(MainActivity.getStarterIntent(this))
+            startActivity(MainActivity.getIntent(this))
             finish()
         } else {
             // TODO: show a alert dialog

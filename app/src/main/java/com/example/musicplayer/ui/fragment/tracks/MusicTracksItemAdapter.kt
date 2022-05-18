@@ -16,7 +16,10 @@ import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.set
 import com.example.musicplayer.utils.setup
 import com.example.musicplayer.utils.vibrate
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MusicTracksItemAdapter(
     private val artistList: HashMap<Long, Artist>,
@@ -24,7 +27,6 @@ class MusicTracksItemAdapter(
     private val onMoreClick: (Music) -> Unit,
     private val lifecycleOwner: LifecycleOwner
 ) : MusicItemAdapter<MusicTracksItemAdapter.MusicTracksHolder>() {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     val isSelected by lazy {
         MutableLiveData<Boolean>()
@@ -99,22 +101,17 @@ class MusicTracksItemAdapter(
 
         fun bind(music: Music) {
             this.music = music
-            scope.launch {
-                setMusic(music, artistList[music.artistId]?.name ?: "")
-            }
+            setMusic(music, artistList[music.artistId]?.name ?: "")
         }
 
-        private suspend fun setMusic(music: Music, artistName: String) = with(binding) {
+        private fun setMusic(music: Music, artistName: String) = with(binding) {
             musicItemName.text = music.name
             musicItemArtist.text = artistName
-            val icon = music.getAlbumImage()
-            withContext(Dispatchers.Main) {
-                Glide.with(root)
-                    .applyDefaultRequestOptions(Constants.glideDiskCacheStrategy)
-                    .load(icon)
-                    .error(R.drawable.music_player_icon)
-                    .into(musicItemImage)
-            }
+            Glide.with(root)
+                .applyDefaultRequestOptions(Constants.glideDiskCacheStrategy)
+                .load(music.getAlbumImage())
+                .error(R.drawable.music_player_icon)
+                .into(musicItemImage)
         }
 
         fun select(isSelected: Boolean) = with(binding) {

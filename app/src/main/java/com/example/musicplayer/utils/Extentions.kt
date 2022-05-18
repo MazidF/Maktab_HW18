@@ -2,6 +2,7 @@ package com.example.musicplayer.utils
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -23,6 +24,7 @@ import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -44,7 +46,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
-import javax.xml.datatype.DatatypeConstants.DURATION
+import kotlin.collections.HashMap
 
 
 typealias MediaInfo = MediaStore.Audio.Media
@@ -296,7 +298,7 @@ fun Context.vibrate(duration: Long = 500): Boolean {
     return true
 }
 
-suspend fun pathToBitmap(path: String): Bitmap? {
+fun pathToBitmap(path: String): Bitmap? {
     return try {
         val mmr = MediaMetadataRetriever()
         mmr.setDataSource(path)
@@ -424,4 +426,24 @@ fun View.scale(scale: Int, duration: Long) {
     }
     anim.duration = duration
     anim.start()
+}
+
+fun Context.isServiceActive(serviceClass: Class<*>): Boolean {
+    val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val name = serviceClass.name
+    for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+        if (name == service.service.className) {
+            return true
+        }
+    }
+    return false
+}
+
+fun <K, V> HashMap<K, V>.getOrSaveDefault(key: K, producer: () -> V): V {
+    synchronized(this) {
+        val result = this[key] ?: producer().also {
+            this[key] = it
+        }
+        return result
+    }
 }

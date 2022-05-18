@@ -7,19 +7,15 @@ import com.bumptech.glide.Glide
 import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.ControllerBinding
-import com.example.musicplayer.domain.controller.MusicManager
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ControllerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet
 ) : MaterialCardView(context, attrs) {
     private val binding: ControllerBinding
-    private val scope = CoroutineScope(Dispatchers.IO)
     private var isPlaying: Boolean? = null
 
     init {
@@ -32,15 +28,10 @@ class ControllerView @JvmOverloads constructor(
     fun setMusic(music: Music, artist: String) = with(binding) {
         controllerMusicName.text = music.name
         controllerMusicArtist.text = artist
-        scope.launch {
-            val image = music.getAlbumImage()
-            withContext(Dispatchers.Main) {
-                Glide.with(root)
-                    .load(image)
-                    .error(R.drawable.music_player_icon)
-                    .into(controllerImage)
-            }
-        }
+        Glide.with(root)
+            .load(music.getAlbumImage())
+            .error(R.drawable.music_player_icon)
+            .into(controllerImage)
     }
 
     fun setIsPlaying(isPlaying: Boolean) {

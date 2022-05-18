@@ -12,18 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import com.example.musicplayer.R
-import com.example.musicplayer.data.local.data_store.music.MusicDataStore
 import com.example.musicplayer.databinding.ActivityMainBinding
-import com.example.musicplayer.service.MusicService
 import com.example.musicplayer.service.ServiceControlInput
+import com.example.musicplayer.service.SuperMusicService
+import com.example.musicplayer.service.receiver.SCI
 import com.example.musicplayer.ui.ViewModelApp
+import com.example.musicplayer.ui.fragment.splash.FragmentSplashDirections
 import com.example.musicplayer.utils.gone
+import com.example.musicplayer.utils.isServiceActive
 import com.example.musicplayer.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -31,41 +33,61 @@ class MainActivity : AppCompatActivity() {
         findNavController(R.id.fragmentContainerView)
     }
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: ViewModelMain by viewModels()
-    private val appViewModel: ViewModelApp by viewModels()
+    private val viewModel: ViewModelApp by viewModels()
 
-    @Inject
-    lateinit var musicDataStore: MusicDataStore
+    private val connection by lazy {
+        MusicServiceConnection()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (isServiceActive(SuperMusicService::class.java)) {
+            viewModel.hasSplashEnded.value = null
+            startService(SCI.END_NOTIFICATION.name)
+            navigateToMainFragment(savedInstanceState != null)
+        }
         init()
         observe()
     }
 
-    private fun startService() {
-        val intent = Intent(this, MusicService::class.java)
-/*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    private fun navigateToMainFragment(isRotation: Boolean) {
+        if (isRotation.not()) {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.fragmentSplash, true)
+                .build()
+            navController.navigate(
+                FragmentSplashDirections.actionFragmentSplashToFragmentMain(),
+
+                navOptions
+            )
+        }
+    }
+
+    private fun startService(action: String? = null) {
+        val intent = SuperMusicService.getIntent(this).apply {
+            this.action = action
+        }
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && action == null) {
             startForegroundService(intent)
         } else {
             startService(intent)
-        }*/
-        startService(intent)
+        }
     }
 
     private fun init() = with(binding) {
         with(musicController) {
             setOnNextClickListener {
-                viewModel.next()
+                connection.binder?.next()
             }
             setOnPrevClickListener {
-                viewModel.prev()
+                connection.binder?.prev()
             }
             setOnPausePlayClickListener {
-                viewModel.playOrPause()
+                connection.binder?.playOrPause()
             }
             musicController.setOnClickListener {
                 musicController.gone()
@@ -75,19 +97,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        appViewModel.hasSplashEnded.observe(this) {
+        viewModel.hasSplashEnded.observe(this) {
             if (it == true) {
                 startService()
                 supportActionBar?.show()
                 binding.musicController.visible()
-                appViewModel.hasSplashEnded.removeObservers(this)
+                viewModel.hasSplashEnded.removeObservers(this)
             } else if (it == false) {
                 binding.musicController.gone()
                 supportActionBar?.hide()
             }
         }
         lifecycleScope.launch {
-            viewModel.currentMusicStateFlow.collect {
+            viewModel.musicStateFlow.collect {
                 if (binding.musicController.isVisible) {
                     binding.musicController.setMusic(
                         music = it,
@@ -97,18 +119,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
         lifecycleScope.launch {
-            viewModel.musicStateStateFlow.collect {
-                binding.musicController.setIsPlaying(it.musicIsPlaying)
+            viewModel.musicIsPlayingStateFlow.collect {
+                binding.musicController.setIsPlaying(it)
             }
         }
-
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         if (binding.musicController.isGone) {
             binding.musicController.visible()
-            viewModel.currentMusicStateFlow.value.let {
+            viewModel.musicStateFlow.value.let {
                 binding.musicController.setMusic(
                     music = it,
                     artist = viewModel.getArtist(it.artistId)?.name ?: ""
@@ -118,29 +139,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startNotification() {
-        val intent = Intent(this, MusicService::class.java).apply {
-            action = ServiceControlInput.START.name
+        val intent = SuperMusicService.getIntent(this).apply {
+            action = ServiceControlInput.START_NOTIFICATION.name
         }
         startService(intent)
     }
 
     override fun onStop() {
         super.onStop()
-        if (viewModel.isPlaying.value == true) {
+        if (connection.binder?.isPlaying() == true) {
             startNotification()
         } else {
-            val intent = Intent(this, MusicService::class.java)
-            stopService(intent)
+            val intent = SuperMusicService.getIntent(this).apply {
+                action = SCI.END_SERVICE.name
+            }
+            startService(intent)
+            // or stopService(intent)
         }
     }
 
     inner class MusicServiceConnection : ServiceConnection {
-        override fun onServiceConnected(p0: ComponentName?, binder: IBinder) {
+        var binder: SuperMusicService.MusicBinder? = null
+            set(value) {
+                MainActivity.binder = value
+                field = value
+            }
 
+        override fun onServiceConnected(p0: ComponentName?, binder: IBinder) {
+            this.binder = binder as SuperMusicService.MusicBinder
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
-
+            binder = null
         }
     }
 
@@ -148,6 +178,8 @@ class MainActivity : AppCompatActivity() {
         fun getIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
         }
-        fun getStarterIntent(context: Context) = Intent(context, MainActivity::class.java)
+
+        private var binder: SuperMusicService.MusicBinder? = null
+        fun getBinder() = binder
     }
 }

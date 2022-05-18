@@ -1,3 +1,4 @@
+/*
 package com.example.musicplayer.service
 
 import android.annotation.SuppressLint
@@ -74,9 +75,11 @@ class MusicService : Service() {
             CLOSE.name -> {
                 notificationManager.cancelNotification()
             }
-            START.name -> {
+*/
+/*            START.name -> {
                 startNotification()
-            }
+            }*//*
+
         }
     }
 
@@ -137,3 +140,4 @@ class MusicService : Service() {
         super.onDestroy()
     }
 }
+*/

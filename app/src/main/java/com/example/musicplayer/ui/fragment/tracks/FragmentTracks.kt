@@ -2,16 +2,16 @@ package com.example.musicplayer.ui.fragment.tracks
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.musicplayer.R
 import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.FragmentTracksBinding
 import com.example.musicplayer.ui.ViewModelApp
+import com.example.musicplayer.ui.activity.main.MainActivity
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
-import com.example.musicplayer.ui.selection.createSelectionTracker
 import com.example.musicplayer.utils.createAlphabetScrollbar
-import com.example.musicplayer.utils.logger
 import com.example.musicplayer.utils.smoothSnapToPosition
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +24,7 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     private val binding get() = _binding!!
 
     private val viewModel: ViewModelTracks by viewModels()
-    private val appViewModel: ViewModelApp by viewModels()
+    private val appViewModel: ViewModelApp by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,11 +39,11 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
             onItemClick = this@FragmentTracks::onClick,
             onMoreClick = this@FragmentTracks::onMoreClick,
             lifecycleOwner = viewLifecycleOwner
-        )/*.also {
-            // TODO: change action bar
-//            it.isSelected.observe(viewLifecycleOwner) { bool ->
-//            }
-        }*/
+        ).apply {
+            isSelected.observe(viewLifecycleOwner) {
+                appViewModel.startSelection()
+            }
+        }
         trackList.apply {
             adapter = musicAdapter
         }
@@ -63,7 +63,7 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
     }
 
     private fun onClick(music: Music, pos: Int) {
-        appViewModel.updateMusicLists(MusicLists.TRACKS(), null, pos)
+        MainActivity.getBinder()?.changeList(MusicLists.TRACKS(), pos)
     }
 
     private fun onMoreClick(music: Music) {

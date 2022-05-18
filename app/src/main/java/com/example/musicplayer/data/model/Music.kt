@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.musicplayer.R
-import com.example.musicplayer.utils.Constants.MUSIC_PER_PAGE
+import com.example.musicplayer.utils.Constants.MUSIC_PLAYER_ICON_ID
 import com.example.musicplayer.utils.Constants.musicBitmaps
+import com.example.musicplayer.utils.getOrSaveDefault
 import com.example.musicplayer.utils.pathToBitmap
 
 @Entity(
@@ -44,22 +44,12 @@ data class Music(
         }
     }
 
-    private infix fun Long.remain(other: Int): Int {
-        return (this % other).toInt()
-    }
-
-    // TODO: make share first image set first
-    suspend fun getAlbumImage(): Any {
-        val index = id remain MUSIC_PER_PAGE
-        if (index < 0) return R.drawable.music_player_icon
-        val (id, bitmap) = musicBitmaps[index]
-        return if (id == this.id) {
-            bitmap
-        } else {
-            pathToBitmap(data).apply {
-                musicBitmaps[index] = Pair(this@Music.id, this)
-            }
-        } ?: R.drawable.music_player_icon
+    fun getAlbumImage(): Any {
+        val index = albumId
+        if (index < 0) return MUSIC_PLAYER_ICON_ID
+        return musicBitmaps.getOrSaveDefault(index) {
+            pathToBitmap(data) ?: MUSIC_PLAYER_ICON_ID
+        }
     }
 }
 

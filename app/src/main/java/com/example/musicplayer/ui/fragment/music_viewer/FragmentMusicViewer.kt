@@ -1,6 +1,7 @@
 package com.example.musicplayer.ui.fragment.music_viewer
 
 import android.annotation.SuppressLint
+import android.graphics.Color.RED
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
@@ -11,11 +12,10 @@ import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentMusicBinding
-import com.example.musicplayer.ui.activity.main.ViewModelMain
+import com.example.musicplayer.ui.ViewModelApp
+import com.example.musicplayer.ui.activity.main.MainActivity
 import com.example.musicplayer.utils.repeatLaunchOnState
 import com.example.musicplayer.utils.secondToTimeFormatter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 class FragmentMusicViewer : Fragment(R.layout.fragment_music) {
@@ -23,7 +23,7 @@ class FragmentMusicViewer : Fragment(R.layout.fragment_music) {
     private val binding: FragmentMusicBinding
         get() = _binding!!
 
-    private val viewModel: ViewModelMain by activityViewModels()
+    private val viewModel: ViewModelApp by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,37 +33,38 @@ class FragmentMusicViewer : Fragment(R.layout.fragment_music) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMusicBinding.bind(view)
-        init()
         observe()
+        init()
     }
 
-    private fun setupShuffle(hasShuffle: Boolean) {
-        binding.musicViewerShuffle.setImageResource(
-            if (hasShuffle) R.drawable.ic_shuffle else R.drawable.ic_right
+    private fun setupShuffle(hasShuffle: Boolean) = with(binding.musicViewerShuffle) {
+        setColorFilter(
+            if (hasShuffle) RED else context.getColor(R.color.base_icon_color)
         )
     }
 
     private fun init() = with(binding) {
         musicViewerName.isSelected = true
         musicViewerArtist.isSelected = true
-        musicViewerDuration.text = viewModel.musicDuration().secondToTimeFormatter()
-        setupShuffle(viewModel.getShuffle())
+
+        val binder = MainActivity.getBinder()
+        setupShuffle(binder?.getShuffle() ?: false)
         musicViewerPrev.setOnClickListener {
-            viewModel.prev()
+            binder?.prev()
         }
         musicViewerPlayOrPause.setOnClickListener {
-            viewModel.playOrPause()
+            binder?.playOrPause()
         }
         musicViewerNext.setOnClickListener {
-            viewModel.next()
+            binder?.next()
         }
         musicViewerShuffle.setOnClickListener {
-            viewModel.shuffle()
+            binder?.shuffle()
         }
         musicViewerSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, pos: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    viewModel.seekTo(pos)
+                    binder?.seekTo(pos)
                 }
             }
 
@@ -86,23 +87,19 @@ class FragmentMusicViewer : Fragment(R.layout.fragment_music) {
     // TODO: use just one repeatLaunchOnState() and use multi launch
     private fun observe() {
         repeatLaunchOnState(Lifecycle.State.STARTED) {
-            viewModel.currentMusicStateFlow.collect { music ->
+            viewModel.musicStateFlow.collect { music ->
                 with(binding) {
                     musicViewerName.text = music.name
                     musicViewerArtist.text = viewModel.getArtist(music.artistId)?.name ?: ""
-                    val image = music.getAlbumImage()
-                    withContext(Dispatchers.Main) {
-                        Glide.with(root)
-                            .load(image)
-                            .error(R.drawable.music_player_icon)
-                            .into(musicViewerImage)
-                    }
+                    Glide.with(root)
+                        .load(music.getAlbumImage())
+                        .error(R.drawable.music_player_icon)
+                        .into(musicViewerImage)
                 }
             }
         }
         repeatLaunchOnState(Lifecycle.State.STARTED) {
-            viewModel.musicStateStateFlow.collect {
-                val isPlaying = it.musicIsPlaying
+            viewModel.musicIsPlayingStateFlow.collect { isPlaying ->
                 with(binding) {
                     musicViewerPlayOrPause.setImageResource(
                         if (isPlaying.not()) R.drawable.ic_play else R.drawable.ic_pause
@@ -123,18 +120,16 @@ class FragmentMusicViewer : Fragment(R.layout.fragment_music) {
             }
         }
         repeatLaunchOnState(Lifecycle.State.STARTED) {
-            viewModel.hasShuffleStateFlow.collect { hasShuffle ->
+            viewModel.musicHasShuffleStateFlow.collect { hasShuffle ->
                 setupShuffle(hasShuffle)
             }
         }
-        val seekbarFlow = viewModel.syncSeekbar()
+        val seekbarFlow = MainActivity.getBinder()?.syncSeekbar()
         repeatLaunchOnState(Lifecycle.State.STARTED) {
             with(binding) {
-                seekbarFlow.collect { pos ->
-                    withContext(Dispatchers.Main) {
-                        musicViewerSeekbar.progress = pos
-                        musicViewerCurrentTime.text = pos.secondToTimeFormatter()
-                    }
+                seekbarFlow?.collect { pos ->
+                    musicViewerSeekbar.progress = pos
+                    musicViewerCurrentTime.text = pos.secondToTimeFormatter()
                 }
             }
         }

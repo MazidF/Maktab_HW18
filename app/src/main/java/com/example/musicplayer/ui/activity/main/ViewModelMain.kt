@@ -1,8 +1,8 @@
+/*
 package com.example.musicplayer.ui.activity.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.musicplayer.data.local.data_store.music.MusicDataStore
 import com.example.musicplayer.data.local.data_store.music.MusicLists
@@ -57,7 +57,8 @@ class ViewModelMain @Inject constructor(
     }
 
     fun setup() {
-        viewModelScope.launch {
+*/
+/*        viewModelScope.launch {
             musicDataStore.preferences.collect {
                 setMusicList(it.musicList, it.musicIndex).join()
                 setShuffle(it.hasShuffle).join()
@@ -85,7 +86,8 @@ class ViewModelMain @Inject constructor(
             musicStateStateFlow.collect {
                 manager.setupMusicState(it)
             }
-        }
+        }*//*
+
         manager.setOnPrepared {
             viewModelScope.launch {
                 val lastState = _musicStateStateFlow.value
@@ -136,10 +138,10 @@ class ViewModelMain @Inject constructor(
         }
     }
 
-    fun updateMusicList(musicLists: MusicLists, id: Long?, musicIndex: Int) {
+    fun updateMusicList(musicLists: MusicLists, musicIndex: Int) {
         if (currentMusicLists != musicLists) {
             viewModelScope.launch {
-                musicDataStore.updateMusicList(musicLists, id)
+                musicDataStore.updateMusicList(musicLists)
             }
         }
         viewModelScope.launch {
@@ -159,7 +161,7 @@ class ViewModelMain @Inject constructor(
     fun updateMusicState(musicState: MusicState) {
         if (currentMusicState != musicState) {
             viewModelScope.launch {
-                musicDataStore.updateMusicState(musicState)
+                musicDataStore.updateMusicPosition(musicState)
             }
         }
     }
@@ -233,3 +235,4 @@ class ViewModelMain @Inject constructor(
         fun getInstance() = instance!! // not a good code :)
     }
 }
+*/

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.musicplayer">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".ui.App"
@@ -13,16 +14,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
+        <receiver
+            android:name=".service.receiver.MusicReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <service
-            android:name=".service.MusicService"
+            android:name=".service.SuperMusicService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity
             android:name=".ui.activity.loading.LoadingActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.activity.main.MainActivity"
             android:exported="true">
@@ -31,15 +35,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!--provider for Hilt_WorkManager-->
-        <provider
+        </activity> <!-- provider for Hilt_WorkManager -->
+        <provider xmlns:tools="http://schemas.android.com/tools"
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            xmlns:tools="http://schemas.android.com/tools"
-            tools:node="remove">
-        </provider>
+            tools:node="remove" />
     </application>
 
 </manifest>

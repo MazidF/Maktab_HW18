@@ -23,9 +23,17 @@ class MusicUseCase (
     private var hasBeenLoaded: Boolean = context == null
     private val scope = CoroutineScope(dispatcher)
 
-    val musicStateFlow = MutableStateFlow<List<Music>>(emptyList())
-    val albumStateFlow = MutableStateFlow<List<Album>>(emptyList())
-    val artistStateFlow = MutableStateFlow<List<Artist>>(emptyList())
+    // TODO: remove if needed
+    private val musicStateFlow = MutableStateFlow<List<Music>>(emptyList())
+    private val albumStateFlow = MutableStateFlow<List<Album>>(emptyList())
+    private val artistStateFlow = MutableStateFlow<List<Artist>>(emptyList())
+
+    ////////////////////////////////service_output//////////////////////////////////////
+
+    val currentMusicStateFlow = MutableStateFlow<Music>(Music.empty)
+    val currentMusicIsPlayingStateFlow = MutableStateFlow<Boolean>(false)
+    val currentMusicDurationStateFlow = MutableStateFlow<Int>(0)
+    val currentMusicHasShuffleStateFlow = MutableStateFlow<Boolean>(false)
 
     val albumMapStateFlow = MutableStateFlow<HashMap<Long, Album>>(hashMapOf())
     val artistMapStateFlow = MutableStateFlow<HashMap<Long, Artist>>(hashMapOf())
@@ -89,5 +97,23 @@ class MusicUseCase (
 
     fun getFavoritesPaging(): DataSource.Factory<Int, Music> {
         return repository.getFavoritesPaging()
+    }
+
+    //////////////////// music_state ////////////////////////
+
+    suspend fun updateMusic(music: Music) {
+        currentMusicStateFlow.emit(music)
+    }
+
+    suspend fun updateMusicIsPlaying(isPlaying: Boolean) {
+        currentMusicIsPlayingStateFlow.emit(isPlaying)
+    }
+
+    suspend fun updateMusicDuration(duration: Int) {
+        currentMusicDurationStateFlow.emit(duration)
+    }
+
+    suspend fun updateMusicShuffle(hasShuffle: Boolean) {
+        currentMusicHasShuffleStateFlow.emit(hasShuffle)
     }
 }

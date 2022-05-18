@@ -49,29 +49,24 @@ class MusicDataStore @Inject constructor(
         } ?: MusicLists.TRACKS()
         val musicIndex = preference[MusicPreferencesKey.MUSIC_INDEX_KEY] ?: 0
         val hasShuffle = preference[MusicPreferencesKey.MUSIC_HAS_SHUFFLE_KEY] ?: false
-        val musicState = MusicState(
-            musicPosition = preference[MusicPreferencesKey.MUSIC_POSITION_KEY] ?: -1,
-            musicIsPlaying = preference[MusicPreferencesKey.MUSIC_IS_PLAYING_KEY] ?: false,
-        )
+        val musicPosition = preference[MusicPreferencesKey.MUSIC_POSITION_KEY] ?: -1
         MusicPreferenceInfo(
             musicList = musicList,
             musicIndex = musicIndex,
             hasShuffle = hasShuffle,
-            musicState = musicState,
+            musicPosition = musicPosition,
         )
     }.flowOn(dispatcher)
 
-    // TODO: remove id
-    // id is for albums or artists list.
-    suspend fun updateMusicList(musicLists: MusicLists, id: Long?) {
+    suspend fun updateMusicList(musicLists: MusicLists) {
         datastore.edit {
             it[MusicPreferencesKey.MUSIC_LIST_KEY]  = musicLists::class.java.simpleName
             when(musicLists) {
                 is MusicLists.ALBUMS -> {
-                    it[MusicPreferencesKey.MUSIC_ALBUM_ID_KEY] = id!!
+                    it[MusicPreferencesKey.MUSIC_ALBUM_ID_KEY] = musicLists.albumId
                 }
                 is MusicLists.ARTISTS -> {
-                    it[MusicPreferencesKey.MUSIC_ARTIST_ID_KEY] = id!!
+                    it[MusicPreferencesKey.MUSIC_ARTIST_ID_KEY] = musicLists.artistId
                 }
             }
         }
@@ -89,10 +84,9 @@ class MusicDataStore @Inject constructor(
         }
     }
 
-    suspend fun updateMusicState(musicState: MusicState) {
+    suspend fun updateMusicPosition(time: Int) {
         datastore.edit {
-            it[MusicPreferencesKey.MUSIC_POSITION_KEY] = musicState.musicPosition
-            it[MusicPreferencesKey.MUSIC_IS_PLAYING_KEY] = musicState.musicIsPlaying
+            it[MusicPreferencesKey.MUSIC_POSITION_KEY] = time
         }
     }
 
@@ -103,6 +97,5 @@ class MusicDataStore @Inject constructor(
         val MUSIC_ARTIST_ID_KEY = longPreferencesKey("musicArtistIdKey")
         val MUSIC_HAS_SHUFFLE_KEY = booleanPreferencesKey("musicHasShuffleKey")
         val MUSIC_POSITION_KEY = intPreferencesKey("musicPositionKey")
-        val MUSIC_IS_PLAYING_KEY = booleanPreferencesKey("musicIsPlayingKey")
     }
 }

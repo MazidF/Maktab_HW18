@@ -1,6 +1,7 @@
-package com.example.musicplayer.service
+package com.example.musicplayer.service.receiver
 
-enum class ServiceControlInput {
+enum class ReceiverInput {
+    START_SERVICE,
     NEXT,
     PREV,
     PLAY_PAUSE,

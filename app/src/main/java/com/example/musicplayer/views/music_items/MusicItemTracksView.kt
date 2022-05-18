@@ -4,15 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
 import com.example.musicplayer.R
-import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.databinding.MusicItemTracksBinding
-import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.set
 import com.example.musicplayer.utils.setup
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class MusicItemTracksView  : MusicItemView {
 
@@ -44,7 +39,7 @@ class MusicItemTracksView  : MusicItemView {
         musicItemName.text = music.name
         musicItemArtist.text = artistName
         val icon = music.getAlbumImage()
-        withContext(Dispatchers.Main) {
+        (Dispatchers.Main) {
             Glide.with(root)
                 .applyDefaultRequestOptions(Constants.glideDiskCacheStrategy)
                 .load(icon)

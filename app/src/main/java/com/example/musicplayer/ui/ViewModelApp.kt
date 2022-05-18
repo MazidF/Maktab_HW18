@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicplayer.data.local.data_store.music.MusicDataStore
 import com.example.musicplayer.data.local.data_store.music.MusicLists
+import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.domain.MusicUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,15 +22,26 @@ class ViewModelApp @Inject constructor(
         MutableLiveData(false)
     }
 
-    // TODO: methods for selection, hiding controller and ...
+    private val _musicStateFlow = useCase.currentMusicStateFlow
+    val musicStateFlow get() = _musicStateFlow.asStateFlow()
 
-    fun updateMusicLists(musicLists: MusicLists, id: Long?, position: Int) {
-        viewModelScope.launch {
-            musicDataStore.updateMusicList(musicLists, id)
-            musicDataStore.updateMusicIndex(position)
-        }
+    private val _musicDurationStateFlow = useCase.currentMusicDurationStateFlow
+    val musicDurationStateFlow get() = _musicDurationStateFlow.asStateFlow()
+
+    private val _musicIsPlayingStateFlow = useCase.currentMusicIsPlayingStateFlow
+    val musicIsPlayingStateFlow get() = _musicIsPlayingStateFlow.asStateFlow()
+
+
+    private val _musicHasShuffleStateFlow = useCase.currentMusicHasShuffleStateFlow
+    val musicHasShuffleStateFlow get() = _musicHasShuffleStateFlow.asStateFlow()
+
+
+    fun getArtist(artistId: Long): Artist? {
+        return useCase.artistMapStateFlow.value[artistId]
     }
 
+
+    // TODO: methods for selection, hiding controller and ...
     private val _selection by lazy {
         MutableLiveData(false)
     }
