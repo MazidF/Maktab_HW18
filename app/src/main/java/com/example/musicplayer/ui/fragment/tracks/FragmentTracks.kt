@@ -88,8 +88,4 @@ class FragmentTracks : FragmentWithBackPress(R.layout.fragment_tracks) {
         super.onDestroyView()
         _binding = null
     }
-
-    companion object {
-        const val SELECTION_ID = "fragment_tracks_selection_id"
-    }
 }

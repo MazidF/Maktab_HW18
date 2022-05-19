@@ -66,4 +66,8 @@ class MusicRepository(
     fun getFavoritesPaging(): DataSource.Factory<Int, Music> {
         return localPaging.getFavorites()
     }
+
+    suspend fun updateMusicItems(vararg musics: Music): Int {
+        return local.updateMusicItems(*musics)
+    }
 }

@@ -1,26 +1,26 @@
 package com.example.musicplayer.domain
 
-import android.content.Context
 import androidx.paging.DataSource
 import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Album
+import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.data.repository.MusicRepository
-import com.example.musicplayer.data.model.AlbumInfo
 import com.example.musicplayer.utils.toMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.CoroutineContext as CoroutineContext1
 
 class MusicUseCase (
     private val repository: MusicRepository,
-    private val dispatcher: CoroutineContext = Dispatchers.IO, // TODO: search about domain layer dispatcher
-    context: Context? = null
+    private val dispatcher: CoroutineContext1 = Dispatchers.IO,
+    // TODO: search about domain layer dispatcher
 ) {
-    private var hasBeenLoaded: Boolean = context == null
     private val scope = CoroutineScope(dispatcher)
 
     // TODO: remove if needed
@@ -42,9 +42,8 @@ class MusicUseCase (
         scope.launch {
             launch {
                 repository.getAllMusics().collect {
-                    if (hasBeenLoaded) {
-                        musicStateFlow.emit(it)
-                    }
+                    val bool = it.equals(musicStateFlow.value)
+                    musicStateFlow.emit(it + listOf())
                 }
             }
             launch {
@@ -57,6 +56,16 @@ class MusicUseCase (
                 repository.getAllArtists().collect {
                     artistStateFlow.emit(it)
                     artistMapStateFlow.emit(it.toMap { key ->  key.id })
+                }
+            }
+            launch {
+                musicStateFlow.collect {
+                    val targetId = currentMusicStateFlow.value.id
+                    it.firstOrNull { music ->
+                        targetId == music.id
+                    }?.let { music ->
+                        updateMusic(music)
+                    }
                 }
             }
         }
@@ -115,5 +124,9 @@ class MusicUseCase (
 
     suspend fun updateMusicShuffle(hasShuffle: Boolean) {
         currentMusicHasShuffleStateFlow.emit(hasShuffle)
+    }
+
+    suspend fun updateMusicItem(vararg musics: Music): Int {
+        return repository.updateMusicItems(*musics)
     }
 }

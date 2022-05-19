@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musicplayer.data.local.data_store.music.MusicDataStore
-import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Artist
+import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.domain.MusicUseCase
+import com.example.musicplayer.utils.logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewModelApp @Inject constructor(
     private val useCase: MusicUseCase,
-    private val musicDataStore: MusicDataStore
 ) : ViewModel() {
     val hasSplashEnded by lazy {
         MutableLiveData(false)
@@ -34,6 +35,16 @@ class ViewModelApp @Inject constructor(
 
     private val _musicHasShuffleStateFlow = useCase.currentMusicHasShuffleStateFlow
     val musicHasShuffleStateFlow get() = _musicHasShuffleStateFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            launch {
+                musicStateFlow.collect {
+                    logger(it.name)
+                }
+            }
+        }
+    }
 
 
     fun getArtist(artistId: Long): Artist? {
@@ -62,5 +73,12 @@ class ViewModelApp @Inject constructor(
 
     fun endSelection() {
         _selection.value = false
+    }
+
+    fun likeOrUnlike(music: Music) {
+        viewModelScope.launch {
+            val newMusic = music.clone(isLiked = music.isLiked.not())
+            useCase.updateMusicItem(newMusic)
+        }
     }
 }

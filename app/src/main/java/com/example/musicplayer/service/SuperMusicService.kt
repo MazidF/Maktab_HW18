@@ -10,6 +10,7 @@ import com.example.musicplayer.data.local.data_store.music.MusicLists
 import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
 import com.example.musicplayer.domain.MusicUseCase
+import com.example.musicplayer.domain.controller.MusicHandler
 import com.example.musicplayer.domain.controller.MusicManager
 import com.example.musicplayer.notification.NotificationHandler
 import com.example.musicplayer.service.receiver.SCI
@@ -71,12 +72,22 @@ class SuperMusicService : Service() {
     }
 
     private fun observe() {
+        var last = MusicHandler().apply {
+            changeMusic(Music.empty)
+        }
         with(musicManager) {
             musicHandler.liveData().observeForever {
-                // TODO: check for differences if needed
                 if (it.hasBeenSetup()) {
-                    updateMusicState(it.isPlaying)
-                    updateMusic(it.music)
+                    if (last.music != it.music) {
+                        updateMusic(it.music)
+                    }
+                    if (last.isPlaying != it.isPlaying) {
+                        updateMusicState(it.isPlaying)
+                    }
+                    last.apply {
+                        this.isPlaying = it.isPlaying
+                        this.music = it.music
+                    }
                 }
             }
         }

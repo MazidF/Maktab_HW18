@@ -83,4 +83,7 @@ class MusicLocalRepository @Inject constructor(
         return musicDataSource.favorites()
     }
 
+    suspend fun updateMusicItems(vararg musics: Music): Int {
+        return musicDataSource.updateItems(*musics)
+    }
 }

@@ -26,9 +26,8 @@ data class Music(
     @ColumnInfo(name = "music_artist_id") val artistId: Long,
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "music_id") val id: Long = 0,
+    @ColumnInfo(name = "music_is_liked") var isLiked: Boolean = false
 ) {
-    @ColumnInfo(name = "music_is_liked")
-    var isLiked: Boolean = false
 
     companion object {
         const val TABLE_NAME = "music_table"
@@ -41,6 +40,21 @@ data class Music(
                 artistId = -1,
                 id = -1
             )
+        }
+    }
+
+    fun clone(
+        name: String = this.name,
+        time: Int = this.time,
+        data: String = this.data,
+        albumId: Long = this.albumId,
+        artistId: Long = this.artistId,
+        isLiked: Boolean = this.isLiked,
+    ): Music {
+        return Music(
+            name, time, data, albumId, artistId, id
+        ).apply {
+            this.isLiked = isLiked
         }
     }
 

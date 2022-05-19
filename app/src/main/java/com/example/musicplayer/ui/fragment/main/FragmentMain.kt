@@ -9,6 +9,7 @@ import com.example.musicplayer.ui.activity.main.ZoomOutPageTransformer
 import com.example.musicplayer.ui.fragment.FragmentWithBackPress
 import com.example.musicplayer.ui.fragment.FragmentWithOnBackListener
 import com.example.musicplayer.ui.fragment.albums.FragmentAlbums
+import com.example.musicplayer.ui.fragment.favorite.FragmentFavorite
 import com.example.musicplayer.ui.fragment.tracks.FragmentTracks
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -18,8 +19,9 @@ class FragmentMain : FragmentWithOnBackListener(R.layout.fragment_main) {
     private val binding get() = _binding!!
 
     private val fragments = listOf<FragmentWithBackPress>(
+        FragmentFavorite::class.java.newInstance(),
         FragmentTracks::class.java.newInstance(),
-        FragmentAlbums::class.java.newInstance()
+        FragmentAlbums::class.java.newInstance(),
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

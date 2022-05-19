@@ -52,7 +52,6 @@ class AppModule {
         return MusicUseCase(
             repository = repository,
             dispatcher = dispatcher,
-            context = if (context.hasBeenLoaded()) null else context
         )
     }
 

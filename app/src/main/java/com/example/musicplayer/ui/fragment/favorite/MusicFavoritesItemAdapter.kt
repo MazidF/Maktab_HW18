@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui.fragment.tracks
+package com.example.musicplayer.ui.fragment.favorite
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,17 +16,13 @@ import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.set
 import com.example.musicplayer.utils.setup
 import com.example.musicplayer.utils.vibrate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 
-class MusicTracksItemAdapter(
+class MusicFavoritesItemAdapter(
     private val artistList: HashMap<Long, Artist>,
     private val onItemClick: (Music, Int) -> Unit,
     private val onMoreClick: (Music) -> Unit,
     private val lifecycleOwner: LifecycleOwner,
-) : MusicItemAdapter<MusicTracksItemAdapter.MusicTracksHolder>() {
+) : MusicItemAdapter<MusicFavoritesItemAdapter.MusicFavoritesHolder>() {
 
     val isSelected by lazy {
         MutableLiveData<Boolean>()
@@ -41,7 +37,7 @@ class MusicTracksItemAdapter(
         }
     }
 
-    inner class MusicTracksHolder(
+    inner class MusicFavoritesHolder(
         private val binding: MusicItemTracksBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         private var music: Music? = null
@@ -119,12 +115,12 @@ class MusicTracksItemAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicTracksHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicFavoritesHolder {
         val binding = MusicItemTracksBinding.inflate(
             LayoutInflater.from(parent.context),
             parent, false
         )
-        return MusicTracksHolder(binding)
+        return MusicFavoritesHolder(binding)
     }
 
     fun scrollToFirst(filter: (Music) -> Boolean, block: (Int) -> Unit) {
@@ -136,7 +132,7 @@ class MusicTracksItemAdapter(
         block(index)
     }
 
-    override fun onBindViewHolder(holder: MusicTracksHolder, position: Int) {
+    override fun onBindViewHolder(holder: MusicFavoritesHolder, position: Int) {
         getItem(position)?.let { music ->
             selections?.let { set ->
                 holder.selectionBind(music, set.contains(music.id))

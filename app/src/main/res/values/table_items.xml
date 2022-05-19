@@ -2,7 +2,7 @@
 <resources>
 
     <string-array name="items">
-<!--        <item>Favorites</item>-->
+        <item>Favorites</item>
         <item>Tracks</item>
         <item>Albums</item>
         <item>Artists</item>
