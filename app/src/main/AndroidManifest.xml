@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
         <receiver
-            android:name=".service.receiver.MusicReceiver"
+            android:name=".service.receiver.MusicNotificationReceiver"
             android:enabled="true"
             android:exported="true" />
 

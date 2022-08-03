@@ -72,7 +72,7 @@ class SuperMusicService : Service() {
     }
 
     private fun observe() {
-        var last = MusicHandler().apply {
+        val last = MusicHandler().apply {
             changeMusic(Music.empty)
         }
         with(musicManager) {
@@ -222,7 +222,7 @@ class SuperMusicService : Service() {
         notificationHandler.updateNotification(music, getArtist(music.artistId)?.name ?: Constants.UNKNOWN)
         notificationHandler.updateNotification(isPlaying())
         startForeground(notificationHandler.notificationId, notification)
-        // stopForeground
+//         stopForeground
     }
 
     private fun endNotification() {

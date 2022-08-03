@@ -10,7 +10,7 @@ import com.example.musicplayer.service.SuperMusicService
 
 typealias SCI = ServiceControlInput
 
-class MusicReceiver : BroadcastReceiver() {
+class MusicNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
@@ -19,19 +19,19 @@ class MusicReceiver : BroadcastReceiver() {
                 startService(context)
             }
             NEXT.name -> {
-                context.sentToServiceWithAction(SCI.NEXT)
+                context.startServiceWithAction(SCI.NEXT)
             }
             PREV.name -> {
-                context.sentToServiceWithAction(SCI.PREV)
+                context.startServiceWithAction(SCI.PREV)
             }
             PLAY_PAUSE.name -> {
-                context.sentToServiceWithAction(SCI.PLAY_PAUSE)
+                context.startServiceWithAction(SCI.PLAY_PAUSE)
             }
 /*            START_NOTIFICATION.name -> {
                 context.sentToServiceWithAction(SCI.START_NOTIFICATION)
             }*/
             END_NOTIFICATION.name -> {
-                context.sentToServiceWithAction(SCI.END_NOTIFICATION)
+                context.startServiceWithAction(SCI.END_NOTIFICATION)
             }
             END_SERVICE.name -> {
                 stopService(context)
@@ -53,7 +53,7 @@ class MusicReceiver : BroadcastReceiver() {
         context.stopService(intent)
     }
 
-    private fun Context.sentToServiceWithAction(action: SCI) {
+    private fun Context.startServiceWithAction(action: SCI) {
         val intent = SuperMusicService.getIntent(this).apply {
             this.action = action.name
         }

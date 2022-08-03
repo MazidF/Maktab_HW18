@@ -14,10 +14,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.musicplayer.R
-import com.example.musicplayer.data.model.Artist
 import com.example.musicplayer.data.model.Music
-import com.example.musicplayer.service.SuperMusicService
-import com.example.musicplayer.service.receiver.MusicReceiver
+import com.example.musicplayer.service.receiver.MusicNotificationReceiver
 import com.example.musicplayer.service.receiver.SCI
 import com.example.musicplayer.ui.activity.main.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -114,7 +112,7 @@ class NotificationHandler @Inject constructor(
     }
 
     private fun createPending(sci: SCI): PendingIntent {
-        val intent = Intent(context, MusicReceiver::class.java).apply {
+        val intent = Intent(context, MusicNotificationReceiver::class.java).apply {
             action = sci.name
         }
         return PendingIntent.getBroadcast(context, 123, intent, PendingIntent.FLAG_IMMUTABLE)
